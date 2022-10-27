@@ -1,0 +1,29 @@
+{
+  "name": "encontrei",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/apps/*",
+    "packages/shared/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "desktop": "yarn workspace @encontrei/desktop",
+    "mobile": "yarn workspace @encontrei/mobile",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "eslint": "^8.0.1",
+    "eslint-config-custom": "*",
+    "prettier": "2.7.1",
+    "turbo": "1.6.1",
+    "typescript": "4.8.4"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {},
+  "packageManager": "yarn@1.22.19"
+}

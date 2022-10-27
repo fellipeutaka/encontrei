@@ -1,0 +1,11 @@
+*/.js
+.js
+node_modules
+dist
+dist-electron
+release
+out
+vite-env.d.ts
+bridge.d.ts
+theme.d.ts
+electron
