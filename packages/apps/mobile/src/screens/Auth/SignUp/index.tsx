@@ -22,7 +22,7 @@ interface FormData {
   password: string;
 }
 
-export default function SignUp() {
+export function SignUp() {
   const formRef = useRef<FormHandles>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation<AuthStackNavigationProps>();

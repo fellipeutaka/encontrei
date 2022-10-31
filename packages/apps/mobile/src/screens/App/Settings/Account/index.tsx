@@ -7,7 +7,7 @@ import { supabase } from "@encontrei/lib/supabase";
 
 import { Container, Options, OptionsContainer } from "../styles";
 
-export default function Account() {
+export function Account() {
   const theme = useTheme();
 
   async function handleSignOut() {

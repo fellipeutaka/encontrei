@@ -7,7 +7,7 @@ import { SettingsStackNavigationProps } from "@encontrei/types/routes/Navigation
 
 import { Container, Options, OptionsContainer } from "./styles";
 
-export default function Settings() {
+export function Settings() {
   const theme = useTheme();
   const navigation = useNavigation<SettingsStackNavigationProps>();
 

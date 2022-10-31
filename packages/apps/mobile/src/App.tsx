@@ -2,15 +2,14 @@ import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import { StatusBar } from "expo-status-bar";
 
 import { useCustomTheme } from "@encontrei/hooks/useCustomTheme";
-import AppStack from "@encontrei/routes/App";
-import AuthStack from "@encontrei/routes/Auth";
-import Splash from "@encontrei/screens/Splash";
-
-import { supabase } from "./lib/supabase";
+import { supabase } from "@encontrei/lib/supabase";
+import { AppStack } from "@encontrei/routes/App";
+import { AuthStack } from "@encontrei/routes/Auth";
+import { Splash } from "@encontrei/screens/Splash";
 
 export function App() {
   const { currentTheme } = useCustomTheme();

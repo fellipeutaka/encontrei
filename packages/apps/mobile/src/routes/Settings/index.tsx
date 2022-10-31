@@ -1,16 +1,16 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 
-import Home from "@encontrei/screens/App/Settings";
-import About from "@encontrei/screens/App/Settings/About";
-import Account from "@encontrei/screens/App/Settings/Account";
-import Appearence from "@encontrei/screens/App/Settings/Appearence";
-import Notifications from "@encontrei/screens/App/Settings/Notifications";
-import { SettingsStackParamsList } from "@encontrei/types/routes/ParamsList/App/Settings";
+import { Settings as Home } from "@encontrei/screens/App/Settings";
+import { About } from "@encontrei/screens/App/Settings/About";
+import { Account } from "@encontrei/screens/App/Settings/Account";
+import { Appearance } from "@encontrei/screens/App/Settings/Appearance";
+import { Notifications } from "@encontrei/screens/App/Settings/Notifications";
+import type { SettingsStackParamsList } from "@encontrei/types/routes/ParamsList/App/Settings";
 
 const Stack = createNativeStackNavigator<SettingsStackParamsList>();
 
-export default function SettingsStack() {
+export function SettingsStack() {
   const theme = useTheme();
 
   return (
@@ -47,8 +47,8 @@ export default function SettingsStack() {
         }}
       />
       <Stack.Screen
-        name="Appearence"
-        component={Appearence}
+        name="Appearance"
+        component={Appearance}
         options={{
           title: "Aparência",
         }}

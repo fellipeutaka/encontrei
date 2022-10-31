@@ -29,7 +29,7 @@ async function fetchItems() {
   return data ?? [];
 }
 
-export default function Accepted() {
+export function Accepted() {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

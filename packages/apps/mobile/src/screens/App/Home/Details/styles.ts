@@ -1,4 +1,4 @@
-import { Dimensions } from "react-native";
+import { Animated, Dimensions } from "react-native";
 
 import styled from "styled-components/native";
 
@@ -22,9 +22,10 @@ export const BackButton = styled.TouchableOpacity`
   background-color: rgba(0, 0, 0, 0.2);
 `;
 
-export const Image = styled.ImageBackground`
+export const Image = styled(Animated.Image)`
   width: ${Dimensions.get("screen").width}px;
   height: ${Dimensions.get("screen").width}px;
+  z-index: 99;
 `;
 
 export const Content = styled.View`

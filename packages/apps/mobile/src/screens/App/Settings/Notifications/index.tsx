@@ -5,11 +5,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "styled-components/native";
 
 import SettingsOption from "@encontrei/components/General/SettingsOption";
-import ScrollIcon from "@encontrei/components/Icons/ScrollIcon";
+import { ScrollIcon } from "@encontrei/components/Icons/ScrollIcon";
 
 import { Container, Options, OptionsContainer } from "../styles";
 
-export default function Notifications() {
+export function Notifications() {
   const theme = useTheme();
   const [orderNotification, setOrderNotification] = useState(true);
 

@@ -2,14 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTheme } from "styled-components/native";
 
-import Accepted from "@encontrei/screens/App/Withdraw/Accepted";
-import Refused from "@encontrei/screens/App/Withdraw/Refused";
-import Sent from "@encontrei/screens/App/Withdraw/Sent";
-import { WithdrawStackParamsList } from "@encontrei/types/routes/ParamsList/App/Withdraw";
+import { Accepted } from "@encontrei/screens/App/Withdraw/Accepted";
+import { Refused } from "@encontrei/screens/App/Withdraw/Refused";
+import { Sent } from "@encontrei/screens/App/Withdraw/Sent";
+import type { WithdrawStackParamsList } from "@encontrei/types/routes/ParamsList/App/Withdraw";
 
 const Stack = createMaterialTopTabNavigator<WithdrawStackParamsList>();
 
-export default function WithdrawStack() {
+export function WithdrawStack() {
   const theme = useTheme();
 
   return (

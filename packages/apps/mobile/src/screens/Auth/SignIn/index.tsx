@@ -28,7 +28,7 @@ interface FormData {
   password: string;
 }
 
-export default function SignIn() {
+export function SignIn() {
   const formRef = useRef<FormHandles>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation<AuthStackNavigationProps>();

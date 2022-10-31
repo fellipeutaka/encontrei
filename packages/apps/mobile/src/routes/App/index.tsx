@@ -4,16 +4,16 @@ import { MaterialCommunityIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "styled-components/native";
 
-import ScrollIcon from "@encontrei/components/Icons/ScrollIcon";
-import { AppStackParamsList } from "@encontrei/types/routes/ParamsList/App";
+import { ScrollIcon } from "@encontrei/components/Icons/ScrollIcon";
+import type { AppStackParamsList } from "@encontrei/types/routes/ParamsList/App";
 
-import Home from "../Home";
-import Settings from "../Settings";
-import Withdraw from "../Withdraw";
+import { HomeStack as Home } from "../Home";
+import { SettingsStack as Settings } from "../Settings";
+import { WithdrawStack as Withdraw } from "../Withdraw";
 
 const Tabs = createBottomTabNavigator<AppStackParamsList>();
 
-export default function AppStack() {
+export function AppStack() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
 

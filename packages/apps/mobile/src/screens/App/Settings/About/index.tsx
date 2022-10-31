@@ -1,6 +1,6 @@
 import { Container, Text, Title } from "./styles";
 
-export default function About() {
+export function About() {
   return (
     <Container>
       <Title>Encontrei</Title>

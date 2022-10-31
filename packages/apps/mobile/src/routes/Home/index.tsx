@@ -4,11 +4,11 @@ import { useTheme } from "styled-components/native";
 import List from "@encontrei/screens/App/Home";
 import Add from "@encontrei/screens/App/Home/Add";
 import Details from "@encontrei/screens/App/Home/Details";
-import { HomeStackParamsList } from "@encontrei/types/routes/ParamsList/App/Home";
+import type { HomeStackParamsList } from "@encontrei/types/routes/ParamsList/App/Home";
 
 const Stack = createNativeStackNavigator<HomeStackParamsList>();
 
-export default function HomeStack() {
+export function HomeStack() {
   const theme = useTheme();
 
   return (

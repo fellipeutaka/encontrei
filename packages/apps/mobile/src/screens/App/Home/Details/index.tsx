@@ -1,13 +1,20 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { Animated } from "react-native";
+import {
+  PinchGestureHandler,
+  State,
+  HandlerStateChangeEvent,
+  PinchGestureHandlerEventPayload,
+} from "react-native-gesture-handler";
 
 import { Feather } from "@expo/vector-icons";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 
 import Button from "@encontrei/components/Controllers/Button";
+import { useHomeRouteParams } from "@encontrei/hooks/useHomeRouteParams";
 import { supabase } from "@encontrei/lib/supabase";
-import { InventoryWithdraw } from "@encontrei/types/InventoryWithdraw";
-import { HomeStackParamsList } from "@encontrei/types/routes/ParamsList/App/Home";
+import type { InventoryWithdraw } from "@encontrei/types/InventoryWithdraw";
 import { formatDate } from "@encontrei/utils/formatDate";
 import Toast from "@encontrei/utils/toast";
 
@@ -33,9 +40,30 @@ export default function Details() {
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const navigation = useNavigation();
-  const { params } = useRoute<RouteProp<HomeStackParamsList, "Details">>();
-
+  const { params } = useHomeRouteParams<"Details">();
   const includedAt = formatDate(params.includedAt);
+  const imageScaleRef = useRef(new Animated.Value(1));
+  const onPinchEvent = Animated.event(
+    [
+      {
+        nativeEvent: { scale: imageScaleRef.current },
+      },
+    ],
+    {
+      useNativeDriver: true,
+    }
+  );
+
+  const onPinchStateChange = (
+    event: HandlerStateChangeEvent<PinchGestureHandlerEventPayload>
+  ) => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      Animated.spring(imageScaleRef.current, {
+        toValue: 1,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
 
   async function handleRequestItem() {
     setLoading(true);
@@ -78,7 +106,15 @@ export default function Details() {
         <Feather name="arrow-left" size={24} color="white" />
       </BackButton>
       <Scroll>
-        <Image source={{ uri: params.photoUrl }} />
+        <PinchGestureHandler
+          onGestureEvent={onPinchEvent}
+          onHandlerStateChange={onPinchStateChange}
+        >
+          <Image
+            source={{ uri: params.photoUrl }}
+            style={{ transform: [{ scale: imageScaleRef.current }] }}
+          />
+        </PinchGestureHandler>
         <Content>
           <Info>
             <GroupTitleAndDescription>

@@ -8,7 +8,7 @@ import { Center } from "@encontrei/components/Layout/Center";
 import Item from "@encontrei/components/Layout/Item";
 import { supabase } from "@encontrei/lib/supabase";
 import { Container, ItemsContainer } from "@encontrei/screens/App/Home/styles";
-import {
+import type {
   InventoryWithdrawItems,
   InventoryWithdrawSent,
 } from "@encontrei/types/InventoryWithdraw";
@@ -35,7 +35,7 @@ async function fetchItems() {
   return data ?? [];
 }
 
-export default function Sent() {
+export function Sent() {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

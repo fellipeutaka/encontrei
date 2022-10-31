@@ -7,7 +7,7 @@ import {
   ItemsContainer,
 } from "@encontrei/screens/App/Home/styles";
 
-export default function Refused() {
+export function Refused() {
   const [list, setList] = useState([
     {
       id: "1",

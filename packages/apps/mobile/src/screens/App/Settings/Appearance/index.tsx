@@ -9,7 +9,7 @@ import { useCustomTheme } from "@encontrei/hooks/useCustomTheme";
 
 import { Container, Options, OptionsContainer } from "../styles";
 
-export default function Appearence() {
+export function Appearance() {
   const theme = useTheme();
   const { currentTheme, toggleTheme } = useCustomTheme();
   const [darkMode, setDarkMode] = useState(currentTheme === "dark");

@@ -2,7 +2,7 @@ import research from "@encontrei/assets/research.json";
 
 import { Container, Lottie } from "./styles";
 
-export default function Splash() {
+export function Splash() {
   return (
     <Container>
       <Lottie
