@@ -166,11 +166,19 @@ export default function Inventory() {
                     <BsThreeDots size={20} />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent sideOffset={2}>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        toast.warn(
+                          "Essa funcionalidade não está disponível no momento"
+                        )
+                      }
+                    >
                       Editar
                       <BsPencil size={12} />
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={async () => await handleDeleteItem(item)}>
+                    <DropdownMenuItem
+                      onClick={async () => await handleDeleteItem(item)}
+                    >
                       Excluir
                       <BsTrash size={12} />
                     </DropdownMenuItem>
