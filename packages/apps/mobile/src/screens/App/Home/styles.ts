@@ -25,6 +25,9 @@ export const ItemList = styled(
   FlatList as new (props: FlatListProps<Inventory>) => FlatList<Inventory>
 ).attrs({
   showsVerticalScrollIndicator: false,
+  contentContainerStyle: {
+    paddingBottom: 40,
+  },
 })`
   height: 100%;
 `;

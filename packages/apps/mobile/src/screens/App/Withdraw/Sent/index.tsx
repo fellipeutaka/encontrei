@@ -92,55 +92,35 @@ export function Sent() {
     }
   }
 
-  const listIsEmpty = items.length === 0;
-
-  function renderContent() {
-    if (loading) {
-      return (
-        <Center>
-          <Spinner />
-        </Center>
-      );
-    } else if (listIsEmpty) {
-      return (
-        <ItemsContainer>
-          <ItemList
-            data={items}
-            onRefresh={handleRefreshList}
-            refreshing={refreshing}
-            keyExtractor={(item) => item.id}
-            renderItem={() => <Center />}
-          />
-        </ItemsContainer>
-      );
-    } else {
-      return (
-        <ItemsContainer>
-          <ItemList
-            data={items}
-            onRefresh={handleRefreshList}
-            refreshing={refreshing}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <Item
-                title={item.inventory.name}
-                location={item.inventory.local}
-                photoUrl={item.inventory.photoFilename}
-                onPress={item.onPress}
-                rightIcon={
-                  <Feather
-                    name="delete"
-                    size={24}
-                    color={theme.colors.mauve12}
-                  />
-                }
-              />
-            )}
-          />
-        </ItemsContainer>
-      );
-    }
+  if (loading) {
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
   }
 
-  return <Container>{renderContent()}</Container>;
+  return (
+    <Container>
+      <ItemsContainer>
+        <ItemList
+          data={items}
+          onRefresh={handleRefreshList}
+          refreshing={refreshing}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Item
+              title={item.inventory.name}
+              location={item.inventory.local}
+              photoUrl={item.inventory.photoFilename}
+              onPress={item.onPress}
+              rightIcon={
+                <Feather name="delete" size={24} color={theme.colors.mauve12} />
+              }
+            />
+          )}
+        />
+      </ItemsContainer>
+    </Container>
+  );
 }

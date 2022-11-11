@@ -9,6 +9,7 @@ import type {
   Item,
 } from "@encontrei/@types/InventoryWithdraw";
 import type { InventoryWithdrawAccepted } from "@encontrei/@types/InventoryWithdrawAccepted";
+import { InventoryWithdrawRefused } from "@encontrei/@types/InventoryWithdrawRefused";
 import { Container } from "@encontrei/components/Container";
 import { DownloadButton } from "@encontrei/components/DownloadButton";
 import { ImagePreview } from "@encontrei/components/ImagePreview";
@@ -141,6 +142,18 @@ export default function Found() {
           id: currentItem.id,
         });
 
+        await supabase
+          .from<InventoryWithdrawRefused>("inventoryWithdrawRefused")
+          .insert({
+            name: currentItem.inventory.name,
+            description: currentItem.inventory.description,
+            category: currentItem.inventory.category,
+            local: currentItem.inventory.local,
+            photoFilename: currentItem.inventory.photoFilename,
+            userId: currentItem.user.id,
+          })
+          .throwOnError();
+
         toast.success("Solicitação recusada com sucesso!");
       }
     } catch (err) {
@@ -198,10 +211,14 @@ export default function Found() {
                       <h2>{item.user.email}</h2>
                     </div>
                     <div className="buttons">
-                      <button onClick={async () => await handleRefuseItem(item)}>
+                      <button
+                        onClick={async () => await handleRefuseItem(item)}
+                      >
                         Recusar
                       </button>
-                      <button onClick={async () => await handleAcceptItem(item)}>
+                      <button
+                        onClick={async () => await handleAcceptItem(item)}
+                      >
                         Aceitar
                       </button>
                     </div>

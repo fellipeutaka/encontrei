@@ -27,7 +27,12 @@ export function Account() {
             icon={
               <Feather name="edit" size={20} color={theme.colors.mauve12} />
             }
-            onPress={() => console.log("Edit profile")}
+            onPress={() =>
+              Toast(
+                "Aviso",
+                "Essa funcionalidade não está disponível no momento"
+              )
+            }
           />
           <SettingsOption
             title="Alterar e-mail"
@@ -38,7 +43,12 @@ export function Account() {
                 color={theme.colors.mauve12}
               />
             }
-            onPress={() => console.log("Change e-mail")}
+            onPress={() =>
+              Toast(
+                "Aviso",
+                "Essa funcionalidade não está disponível no momento"
+              )
+            }
           />
           <SettingsOption
             title="Alterar senha"
@@ -49,7 +59,12 @@ export function Account() {
                 color={theme.colors.mauve12}
               />
             }
-            onPress={() => console.log("Change password")}
+            onPress={() =>
+              Toast(
+                "Aviso",
+                "Essa funcionalidade não está disponível no momento"
+              )
+            }
           />
           <SettingsOption
             title="Sair"
