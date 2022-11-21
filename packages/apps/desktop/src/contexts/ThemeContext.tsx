@@ -1,14 +1,7 @@
-import { createContext, ReactNode } from "react";
-
-import { ThemeProvider as StyledComponentsThemeProvider } from "styled-components";
-
-import { GlobalStyle } from "@encontrei/styles/GlobalStyle";
-import themes from "@encontrei/themes";
-
-import { usePersistedState } from "../hooks/usePersistedState";
+import { createContext, ReactNode, useEffect, useState } from "react";
 
 interface IThemeContext {
-  theme: "dark" | "light";
+  theme: string;
   toggleTheme: () => void;
 }
 
@@ -19,21 +12,39 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = usePersistedState<"dark" | "light">(
-    "@encontrei/theme",
-    "dark"
-  );
+  const [theme, setTheme] = useState("dark");
+
+  useEffect(() => {
+    if (
+      localStorage.getItem("@encontrei/theme") === "dark" ||
+      (localStorage.getItem("@encontrei/theme") === null &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      setTheme("dark");
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("@encontrei/theme", "dark");
+    } else {
+      setTheme("light");
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("@encontrei/theme", "light");
+    }
+  }, []);
 
   function toggleTheme() {
-    setTheme((theme) => (theme === "dark" ? "light" : "dark"));
+    if (theme === "dark") {
+      localStorage.setItem("@encontrei/theme", "light");
+      document.documentElement.classList.remove("dark");
+      setTheme("light");
+    } else {
+      localStorage.setItem("@encontrei/theme", "dark");
+      document.documentElement.classList.add("dark");
+      setTheme("dark");
+    }
   }
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <StyledComponentsThemeProvider theme={themes[theme]}>
-        <GlobalStyle />
-        {children}
-      </StyledComponentsThemeProvider>
+      {children}
     </ThemeContext.Provider>
   );
 }

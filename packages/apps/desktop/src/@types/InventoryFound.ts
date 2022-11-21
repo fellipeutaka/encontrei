@@ -1,20 +1,16 @@
-export interface InventoryFound {
+import { User } from "./User";
+
+export interface SupabaseInventoryFound {
   id: string;
   name: string;
   description: string;
   category: string;
   local: string;
+  photoFilename: string;
   foundAt: string;
   userId: string;
-  photoFilename: string;
-  user: {
-    email: string;
-    name: string;
-  };
 }
 
-export interface Item extends InventoryFound {
-  date: string;
-  time: string;
-  photo: string;
+export interface InventoryFound extends SupabaseInventoryFound {
+  user: User;
 }

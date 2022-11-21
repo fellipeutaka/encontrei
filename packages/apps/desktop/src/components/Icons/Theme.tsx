@@ -1,9 +1,7 @@
 import { HTMLAttributes, useMemo, useId } from "react";
 import { useSpring, animated } from "react-spring";
 
-import { useTheme } from "styled-components";
-
-import { useTheme as useCustomTheme } from "../../hooks/useTheme";
+import { useTheme } from "@encontrei/hooks/useTheme";
 
 const defaultProperties = {
   dark: {
@@ -47,10 +45,9 @@ export default function ThemeIcon({
   animationProperties = defaultProperties,
   ...rest
 }) {
-  const theme = useTheme();
-  const { theme: currentTheme } = useCustomTheme();
   const maskId = useId();
-  const checked = currentTheme === "dark";
+  const { theme } = useTheme();
+  const checked = theme === "dark";
 
   const properties = useMemo(() => {
     if (animationProperties !== defaultProperties) {
@@ -85,7 +82,7 @@ export default function ThemeIcon({
       width={18}
       height={18}
       viewBox="0 0 24 24"
-      color={theme.colors.gray11}
+      className="text-orange-500 dark:text-amber-300"
       fill="none"
       strokeWidth="2"
       strokeLinecap="round"
@@ -102,7 +99,7 @@ export default function ThemeIcon({
           y="0"
           width="100%"
           height="100%"
-          fill={theme.colors.gray11}
+          className="fill-amber-300"
         />
         <animated.circle
           // @ts-expect-error
@@ -115,7 +112,7 @@ export default function ThemeIcon({
       <animated.circle
         cx="12"
         cy="12"
-        fill={theme.colors.gray11}
+        className="fill-orange-500 dark:fill-amber-300"
         // @ts-expect-error
         style={centerCircleProps}
         mask={`url(#${maskId})`}

@@ -5,79 +5,58 @@ import {
   MdOutlineKeyboardArrowUp,
 } from "react-icons/md";
 
-import type { SelectProps, SelectTriggerProps } from "@radix-ui/react-select";
+import * as SelectPrimitive from "@radix-ui/react-select";
+import { twMerge } from "tailwind-merge";
 
-import {
-  Root as StyledRoot,
-  Container,
-  Content as StyledContent,
-  Icon as StyledIcon,
-  Item,
-  ItemIndicator,
-  ItemText,
-  ScrollDown,
-  ScrollUp,
-  Viewport,
-  Trigger as StyledTrigger,
-  Placeholder as StyledPlaceholder,
-} from "./styles";
-
-interface ContentProps {
-  items: Array<{
-    text: string;
-    value: string;
-  }>;
+interface SelectProps {
+  rootProps: SelectPrimitive.SelectProps;
+  triggerProps: SelectPrimitive.SelectTriggerProps;
+  placeholder: string;
+  items: string[];
 }
 
-export function Root(props: SelectProps) {
-  return <StyledRoot {...props} />;
-}
-
-export function Content({ items }: ContentProps) {
-  return (
-    <Container>
-      <StyledContent>
-        <ScrollUp>
-          <MdOutlineKeyboardArrowUp />
-        </ScrollUp>
-        <Viewport>
-          {items.map((item, index) => (
-            <Item key={index} value={item.value}>
-              <ItemText>{item.text}</ItemText>
-              <ItemIndicator>
-                <MdOutlineCheck />
-              </ItemIndicator>
-            </Item>
-          ))}
-        </Viewport>
-        <ScrollDown>
-          <MdOutlineKeyboardArrowDown />
-        </ScrollDown>
-      </StyledContent>
-    </Container>
-  );
-}
-
-export const Trigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
-  (props, ref) => {
-    return <StyledTrigger ref={ref} {...props} />;
-  }
+export const Select = forwardRef<HTMLButtonElement, SelectProps>(
+  ({ rootProps, triggerProps, placeholder, items }, ref) => (
+    <SelectPrimitive.Root {...rootProps}>
+      <SelectPrimitive.Trigger
+        {...triggerProps}
+        className={twMerge(
+          "flex justify-between items-center py-3 px-4 h-11 outline-none bg-zinc-300 dark:bg-zinc-700 focus:ring-2 aria-[invalid='true']:ring-red-600 focus:ring-violet-600 aria-[invalid='true']:focus:ring-violet-600 aria-[invalid='true']:ring-2 rounded transition",
+          triggerProps.className
+        )}
+        ref={ref}
+      >
+        <SelectPrimitive.Value
+          placeholder={<span className="text-gray-400">{placeholder}</span>}
+        />
+        <SelectPrimitive.Icon className="text-gray-400">
+          <MdOutlineKeyboardArrowDown size={24} />
+        </SelectPrimitive.Icon>
+      </SelectPrimitive.Trigger>
+      <SelectPrimitive.Portal>
+        <SelectPrimitive.Content className="bg-zinc-300 dark:bg-zinc-800 rounded-md overflow-hidden shadow-lg">
+          <SelectPrimitive.ScrollUpButton className="flex justify-center items-center h-6">
+            <MdOutlineKeyboardArrowUp />
+          </SelectPrimitive.ScrollUpButton>
+          <SelectPrimitive.Viewport className="p-2">
+            {items.map((item) => (
+              <SelectPrimitive.Item
+                key={item}
+                value={item}
+                className="text-sm rounded relative flex items-center h-6 px-6 text-zinc-900 dark:text-zinc-100 select-none outline-none data-[highlighted]:bg-violet-600 transition"
+              >
+                <SelectPrimitive.ItemText>{item}</SelectPrimitive.ItemText>
+                <SelectPrimitive.ItemIndicator className="absolute left-0 w-6 flex justify-center items-center">
+                  <MdOutlineCheck />
+                </SelectPrimitive.ItemIndicator>
+              </SelectPrimitive.Item>
+            ))}
+          </SelectPrimitive.Viewport>
+          <SelectPrimitive.ScrollDownButton className="flex justify-center items-center h-6">
+            <MdOutlineKeyboardArrowDown />
+          </SelectPrimitive.ScrollDownButton>
+        </SelectPrimitive.Content>
+      </SelectPrimitive.Portal>
+    </SelectPrimitive.Root>
+  )
 );
-
-export function Icon() {
-  return (
-    <StyledIcon>
-      <MdOutlineKeyboardArrowDown size={24} />
-    </StyledIcon>
-  );
-}
-
-interface PlaceholderProps {
-  text: string;
-}
-
-export function Placeholder({ text }: PlaceholderProps) {
-  return (
-    <StyledPlaceholder placeholder={<span id="placeholder">{text}</span>} />
-  );
-}

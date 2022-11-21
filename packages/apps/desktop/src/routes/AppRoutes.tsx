@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router-dom";
 
-import Sidebar from "../components/Sidebar";
-import Delivered from "../screens/Delivered";
-import Found from "../screens/Found";
-import Inventory from "../screens/Inventory";
-import Withdraw from "../screens/Withdraw";
+import { Sidebar } from "@encontrei/components/Sidebar";
+import { Delivered } from "@encontrei/screens/Delivered";
+import { Found } from "@encontrei/screens/Found";
+import { Inventory } from "@encontrei/screens/Inventory";
+import { Withdraw } from "@encontrei/screens/Withdraw";
 
-export default function AppRoutes() {
+export function AppRoutes() {
   return (
     <>
       <Sidebar />

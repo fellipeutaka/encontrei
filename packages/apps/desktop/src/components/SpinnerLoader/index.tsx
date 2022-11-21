@@ -1,9 +1,11 @@
-import { Spinner } from "./styles";
+import { BiLoaderAlt } from "react-icons/bi";
 
 interface SpinnerLoaderProps {
   size?: number;
 }
 
 export function SpinnerLoader({ size }: SpinnerLoaderProps) {
-  return <Spinner size={size} />;
+  return (
+    <BiLoaderAlt className="text-violet-600 animate-loading" size={size} />
+  );
 }

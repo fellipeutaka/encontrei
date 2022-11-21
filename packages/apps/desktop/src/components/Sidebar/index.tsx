@@ -2,16 +2,16 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 import { BsBoxSeam, BsTruck } from "react-icons/bs";
 import { IoExitOutline, IoNotificationsOutline } from "react-icons/io5";
 import { RiFileList3Line } from "react-icons/ri";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+
+import { useTheme } from "@encontrei/hooks/useTheme";
 
 import type { SidebarLink } from "../../@types/SidebarLink";
-import { useTheme } from "../../hooks/useTheme";
 import { supabase } from "../../lib/supabase";
 import { Badge } from "../Badge";
 import Logo from "../Icons/Logo";
 import ThemeIcon from "../Icons/Theme";
 import { Tooltip } from "../Tooltip";
-import { Button, Container, LeaveButton, Options, ThemeButton } from "./styles";
 
 const paths = {
   inventory: "/",
@@ -29,7 +29,7 @@ type INotifications = {
   };
 };
 
-export default function Sidebar() {
+export function Sidebar() {
   const [notifications, setNotifications] = useState<INotifications>({
     inventory: {
       path: paths.inventory,
@@ -49,7 +49,7 @@ export default function Sidebar() {
     },
   });
   const { pathname } = useLocation();
-  const { toggleTheme: handleToggleTheme } = useTheme();
+  const { toggleTheme } = useTheme();
 
   const createLink = useCallback(
     ({ path, icon, text }: SidebarLink) => {
@@ -182,35 +182,44 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <Container>
-      <Options>
+    <aside className="flex flex-col justify-between items-center w-14 h-screen dark:bg-neutral-900 bg-zinc-200 border-r border-r-zinc-600 py-4 px-2 absolute top-0 -left-16 transition animate-sidebarEntrance">
+      <section className="flex flex-col items-center gap-6">
         <Logo />
         {sidebarLinks.map((link) => (
           <Badge content={getNotificationAmount(link)} max={9} key={link.path}>
-            <Tooltip tooltipContent={link.text}>
-              <Button
+            <Tooltip content={link.text}>
+              <Link
                 to={link.path}
                 aria-label={link.text}
                 aria-checked={link.active}
+                className="w-10 h-10 flex justify-center items-center rounded outline-none text-zinc-400 text-xl font-semibold transition aria-[checked='true']:bg-zinc-600 aria-[checked='true']:text-white hover:bg-zinc-500 hover:text-zinc-800 focus-visible:bg-zinc-500 focus-visible:text-zinc-800"
               >
                 {link.icon}
-              </Button>
+              </Link>
             </Tooltip>
           </Badge>
         ))}
-      </Options>
+      </section>
       <div>
-        <Tooltip tooltipContent="Trocar tema">
-          <ThemeButton aria-label="Toggle theme" onClick={handleToggleTheme}>
+        <Tooltip content="Trocar tema">
+          <button
+            className="w-10 h-10 flex justify-center items-center rounded outline-none text-zinc-100 text-xl font-semibold mb-2 transition hover:bg-zinc-500 hover:text-zinc-100 focus-visible:bg-zinc-500 focus-visible:text-zinc-100"
+            aria-label="Toggle theme"
+            onClick={toggleTheme}
+          >
             <ThemeIcon />
-          </ThemeButton>
+          </button>
         </Tooltip>
-        <Tooltip tooltipContent="Sair">
-          <LeaveButton aria-label="Sign Out" onClick={handleSignOut}>
+        <Tooltip content="Sair">
+          <button
+            className="w-10 h-10 flex justify-center items-center rounded outline-none text-red-600 text-xl font-semibold mb-2 transition hover:text-red-800 focus-visible:text-red-800"
+            aria-label="Sign Out"
+            onClick={handleSignOut}
+          >
             <IoExitOutline />
-          </LeaveButton>
+          </button>
         </Tooltip>
       </div>
-    </Container>
+    </aside>
   );
 }

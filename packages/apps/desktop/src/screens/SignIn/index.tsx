@@ -1,82 +1,94 @@
-import { FormEvent, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { BiLockAlt } from "react-icons/bi";
 import { BsEnvelope } from "react-icons/bs";
 
+import { motion } from "framer-motion";
 import Lottie from "lottie-react";
 
 import research from "@encontrei/assets/research.json";
-import { SpinnerLoader } from "@encontrei/components/SpinnerLoader";
+import { Button } from "@encontrei/components/Button";
+import * as TextField from "@encontrei/components/TextField";
 import { supabase } from "@encontrei/lib/supabase";
 
-import {
-  Button,
-  Container,
-  Form,
-  Input,
-  InputContainer,
-  Label,
-  Title,
-} from "./styles";
+interface IInputs {
+  email: string;
+  password: string;
+}
 
 export default function SignIn() {
-  const emailInputRef = useRef<HTMLInputElement>(null);
-  const passwordInputRef = useRef<HTMLInputElement>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<IInputs>();
 
-  async function handleSignIn(e: FormEvent) {
-    e.preventDefault();
-    const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i;
-
-    if (!emailInputRef.current?.value.trim()) {
-      window.Main.showError("O e-mail é obrigatório!");
-      emailInputRef.current?.focus();
-    } else if (!emailRegex.test(emailInputRef.current.value)) {
-      window.Main.showError("E-mail inválido!");
-      emailInputRef.current?.focus();
-    } else if (!passwordInputRef.current?.value.trim()) {
-      window.Main.showError("A senha é obrigatória!");
-      passwordInputRef.current?.focus();
-    } else {
-      setLoading(true);
-      const { error } = await supabase.auth.signIn({
-        email: emailInputRef.current.value,
-        password: passwordInputRef.current.value,
-      });
-      if (error) {
-        setLoading(false);
-        window.Main.showError(error.message);
-      }
+  async function signIn({ email, password }: IInputs) {
+    const { error } = await supabase.auth.signIn({
+      email,
+      password,
+    });
+    if (error) {
+      window.Main.showError(error.message);
     }
   }
 
   return (
-    <Container>
-      <Title>Achados e Perdidos</Title>
-      <Lottie
-        animationData={research}
-        loop
-        style={{ width: "25vw", height: "25vh" }}
-      />
-      <Form onSubmit={handleSignIn}>
-        <Label htmlFor="email">E-mail</Label>
-        <InputContainer>
-          <Input name="email" id="email" ref={emailInputRef} />
-          <BsEnvelope size={24} />
-        </InputContainer>
-        <Label htmlFor="senha">Senha</Label>
-        <InputContainer>
-          <Input
-            name="senha"
-            id="senha"
-            type="password"
-            ref={passwordInputRef}
-          />
-          <BiLockAlt size={24} />
-        </InputContainer>
-        <Button type="submit" disabled={loading}>
-          {loading ? <SpinnerLoader /> : "Entrar"}
+    <motion.main
+      className="flex flex-col justify-center items-center h-screen py-16"
+      initial={{ opacity: 0, paddingRight: 128 }}
+      animate={{ opacity: 1, paddingRight: 0 }}
+    >
+      <h1 className="text-7xl font-semibold">Encontrei</h1>
+      <Lottie animationData={research} loop className="w-1/4 h-1/4 my-16" />
+      <form
+        className="flex flex-col gap-8 w-full max-w-lg"
+        onSubmit={handleSubmit(signIn)}
+      >
+        <div className="flex flex-col gap-4">
+          <label className="text-3xl font-semibold max-w-fit" htmlFor="email">
+            E-mail
+          </label>
+          <TextField.Root className="h-14" aria-invalid={Boolean(errors.email)}>
+            <BsEnvelope className="w-6 h-6 text-zinc-400" />
+            <TextField.Input
+              id="email"
+              placeholder="E-mail"
+              {...register("email", {
+                required: "E-mail é obrigatório!",
+                pattern: /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i,
+              })}
+            />
+          </TextField.Root>
+          <span className="text-red-600 font-bold -mt-2">
+            {errors.email?.message}
+          </span>
+        </div>
+        <div className="flex flex-col gap-4">
+          <label className="text-3xl font-semibold max-w-fit" htmlFor="senha">
+            Senha
+          </label>
+          <TextField.Root
+            className="h-14"
+            aria-invalid={Boolean(errors.password)}
+          >
+            <BiLockAlt className="w-6 h-6 text-zinc-400" />
+            <TextField.Input
+              id="senha"
+              placeholder="Senha"
+              type="password"
+              {...register("password", {
+                required: "Senha é obrigatória!",
+              })}
+            />
+          </TextField.Root>
+          <span className="text-red-600 font-bold -mt-2">
+            {errors.password?.message}
+          </span>
+        </div>
+        <Button type="submit" isLoading={isSubmitting} className="h-16">
+          Entrar
         </Button>
-      </Form>
-    </Container>
+      </form>
+    </motion.main>
   );
 }

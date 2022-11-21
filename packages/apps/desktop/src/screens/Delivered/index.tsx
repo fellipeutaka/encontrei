@@ -1,20 +1,21 @@
 import { useEffect, useState, useCallback } from "react";
-import { AiOutlineMail, AiOutlineUser } from "react-icons/ai";
-import { BiCategory } from "react-icons/bi";
-import { IoLocationOutline } from "react-icons/io5";
+import { BsDownload, BsArrowUp } from "react-icons/bs";
+import { toast } from "react-toastify";
 
-import type {
-  InventoryWithdrawAccepted,
-  Item,
-} from "@encontrei/@types/InventoryWithdrawAccepted";
-import { Container } from "@encontrei/components/Container";
-import { DownloadButton } from "@encontrei/components/DownloadButton";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { Reorder, motion } from "framer-motion";
+
+import type { InventoryWithdrawAccepted } from "@encontrei/@types/InventoryWithdrawAccepted";
+import { Button } from "@encontrei/components/Button";
+import { Arrow } from "@encontrei/components/Icons/Arrow";
 import { ImagePreview } from "@encontrei/components/ImagePreview";
-import { Modal } from "@encontrei/components/Modal";
 import { SpinnerLoader } from "@encontrei/components/SpinnerLoader";
-import { Table } from "@encontrei/components/Table";
-import { capitalizeFirstLetter } from "@encontrei/utils/capitalizeFirstLetter";
-import { getDisplayDateValues } from "@encontrei/utils/date";
 import { downloadCSV } from "@encontrei/utils/downloadCSV";
 import { getItems } from "@encontrei/utils/getItems";
 import { getPublicUrl } from "@encontrei/utils/getPublicUrl";
@@ -28,86 +29,205 @@ async function fetchItems() {
 `
   );
 
-  const itens =
-    data?.map((item) => {
-      const { displayDate, displayHour } = getDisplayDateValues(
-        item.acceptedAt
-      );
-
-      return {
-        ...item,
-        date: displayDate,
-        time: displayHour,
-        photo: getPublicUrl("inventoryWithdrawAccepted/" + item.photoFilename),
-      };
-    }) ?? null;
-
-  return itens;
+  return data;
 }
 
-export default function Found() {
-  const [items, setItems] = useState<Item[] | null>(null);
+const columnHelper = createColumnHelper<InventoryWithdrawAccepted>();
+const columns = [
+  columnHelper.accessor("name", {
+    header: "Nome",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("description", {
+    header: "Descrição",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("category", {
+    header: () => "Categoria",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("local", {
+    header: () => "Local",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("acceptedAt", {
+    header: () => "Data",
+    cell: (info) =>
+      new Date(info.getValue()).toLocaleString("pt-BR", {
+        dateStyle: "short",
+        timeStyle: "short",
+      }),
+  }),
+  columnHelper.accessor("user.name", {
+    header: () => "Usuário",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("user.email", {
+    header: () => "E-mail",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("photoFilename", {
+    enableSorting: false,
+    header: () => "Foto",
+    cell: (info) => (
+      <ImagePreview
+        src={getPublicUrl("inventoryWithdrawAccepted/" + info.getValue())}
+        name={info.getValue()}
+      />
+    ),
+  }),
+];
+
+const BsArrowDown = motion(Arrow);
+
+export function Delivered() {
+  const [items, setItems] = useState<InventoryWithdrawAccepted[] | null>(null);
+  const [rowSelection, setRowSelection] = useState({});
+  const table = useReactTable({
+    data: items ?? [],
+    columns,
+    state: {
+      rowSelection,
+    },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
 
   useEffect(() => {
     fetchItems()
       .then((data) => setItems(data))
-      .catch(console.error);
+      .catch((err) => {
+        console.error(err);
+        toast.error("Ocorreu um erro ao buscar os itens");
+      });
   }, []);
 
   const handleDownload = useCallback(() => {
     if (items) {
-      downloadCSV(items, "inventario");
+      downloadCSV(
+        items.map(({ user, ...inventory }) => ({
+          Nome: inventory.name,
+          Descrição: inventory.description,
+          Categoria: inventory.category,
+          Local: inventory.local,
+          Data: new Date(inventory.acceptedAt).toLocaleString("pt-BR", {
+            dateStyle: "short",
+            timeStyle: "short",
+          }),
+          Foto: getPublicUrl("inventory/" + inventory.photoFilename),
+          Usuário: user.name,
+          "E-mail": user.email,
+        })),
+        "entregues"
+      );
     }
   }, [items]);
 
   return (
-    <Container>
-      <header>
-        <h1>Entregues</h1>
-        <DownloadButton onClick={handleDownload} />
+    <main className="flex flex-col justify-center items-center h-screen">
+      <header className="flex min-w-[64rem] w-full max-w-7xl justify-between items-center opacity-0 animate-fade">
+        <h1 className="text-6xl font-semibold">Entregues</h1>
+        <div className="flex items-center gap-2">
+          <Button
+            className="bg-green-600 hover:bg-green-700 focus-visible:ring-green-600 h-11"
+            disabled={items?.length === 0}
+            onClick={handleDownload}
+          >
+            <BsDownload />
+            <span>Download</span>
+          </Button>
+        </div>
       </header>
       {items ? (
-        <Table
-          body={items.map((item) => (
-            <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>{capitalizeFirstLetter(item.category)}</td>
-              <td>{item.description}</td>
-              <td>{capitalizeFirstLetter(item.local)}</td>
-              <td>{item.date}</td>
-              <td>{item.time}</td>
-              <ImagePreview src={item.photo} name={item.name} />
-              <Modal
-                content={
-                  <>
-                    <h1>{item.name}</h1>
-                    <img src={item.photo} alt={item.name} />
-                    <h2>{item.description}</h2>
-                    <div>
-                      <BiCategory size={20} />
-                      <h2>{capitalizeFirstLetter(item.category)}</h2>
-                    </div>
-                    <div>
-                      <IoLocationOutline size={20} />
-                      <h2>{capitalizeFirstLetter(item.local)}</h2>
-                    </div>
-                    <div>
-                      <AiOutlineUser size={20} />
-                      <h2>{item.user.name}</h2>
-                    </div>
-                    <div>
-                      <AiOutlineMail size={20} />
-                      <h2>{item.user.email}</h2>
-                    </div>
-                  </>
-                }
-              />
-            </tr>
-          ))}
-        />
+        <motion.div
+          className="min-w-[64rem] w-full max-w-7xl overflow-y-scroll overflow-x-hidden animate-fade"
+          animate={{ y: 64 }}
+        >
+          <Reorder.Group
+            as="table"
+            className="rounded-xl min-w-[64rem] w-full max-w-7xl border border-transparent overflow-hidden"
+            values={items}
+            onReorder={setItems}
+          >
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      className="border border-zinc-600 dark:bg-zinc-700 bg-zinc-200 transition duration-300 select-none"
+                    >
+                      {header.column.getCanSort() ? (
+                        <button
+                          className="flex w-full justify-between items-center text-left p-2 outline-none focus-visible:ring-2 ring-violet-600"
+                          type="button"
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {{
+                            asc: (
+                              <BsArrowUp className="w-4 h-4 ml-2 inline-block opacity-0 animate-fade" />
+                            ),
+                            desc: (
+                              <BsArrowDown
+                                animate={{
+                                  rotate: 180,
+                                  transition: { ease: "linear" },
+                                }}
+                                className="w-4 h-4 ml-2 inline-block"
+                              />
+                            ),
+                          }[header.column.getIsSorted() as string] ?? (
+                            <BsArrowDown
+                              initial={{ opacity: 0 }}
+                              animate={{
+                                rotate: 180,
+                                opacity: 0,
+                                transition: { ease: "linear" },
+                              }}
+                              className="w-4 h-4 ml-2 inline-block"
+                            />
+                          )}
+                        </button>
+                      ) : (
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <Reorder.Item as="tr" value={row} key={row.id} drag={false}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className="border border-zinc-600 dark:bg-zinc-800 bg-zinc-400 p-2 min-w-[64px] max-w-md transition duration-300"
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </Reorder.Item>
+              ))}
+            </tbody>
+          </Reorder.Group>
+        </motion.div>
       ) : (
         <SpinnerLoader size={48} />
       )}
-    </Container>
+    </main>
   );
 }

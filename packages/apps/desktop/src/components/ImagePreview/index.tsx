@@ -1,23 +1,27 @@
+import { forwardRef } from "react";
 import { BsDownload } from "react-icons/bs";
 import { FaRegCopy } from "react-icons/fa";
 import { TbWorld } from "react-icons/tb";
 import { toast } from "react-toastify";
 
-import {
-  Container,
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-  DialogContent,
-  DialogOverlay,
-  DialogTrigger,
-} from "./styles";
+import * as Context from "@radix-ui/react-context-menu";
+import * as Dialog from "@radix-ui/react-dialog";
+import { motion } from "framer-motion";
 
 interface ImagePreviewProps {
   src: string;
   name: string;
 }
+
+const ContextItem = (props: Context.ContextMenuItemProps) => (
+  <Context.Item
+    className="flex justify-between items-center h-6 gap-4 px-1.5 text-sm rounded select-none outline-none transition-colors data-[highlighted]:bg-violet-600"
+    {...props}
+  />
+);
+
+const ContextMenuContent = motion(Context.Content);
+const DialogContent = motion(Dialog.Content);
 
 export function ImagePreview({ src, name }: ImagePreviewProps) {
   async function handleDownloadImage() {
@@ -31,7 +35,6 @@ export function ImagePreview({ src, name }: ImagePreviewProps) {
   }
 
   function handleOpenImage() {
-    console.log(window.Main);
     window.Main.openExternal(src);
   }
 
@@ -42,48 +45,59 @@ export function ImagePreview({ src, name }: ImagePreviewProps) {
         autoClose: 2000,
       });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast.error(
         "Ocorreu um erro ao tentar copiar o link para a área de transferência!"
       );
     }
   }
 
-  const ContextContent = () => (
-    <ContextMenuContent>
-      <ContextMenuItem onClick={handleOpenImage}>
+  const ContextContent = forwardRef(() => (
+    <ContextMenuContent
+      initial={{ y: 4 }}
+      animate={{ y: 0 }}
+      className="min-w-[160px] bg-zinc-900 text-zinc-200 rounded-md p-1.5 shadow-md"
+    >
+      <ContextItem onClick={handleOpenImage}>
         Abrir no navegador <TbWorld />
-      </ContextMenuItem>
-      <ContextMenuItem onClick={handleCopyImageLink}>
+      </ContextItem>
+      <ContextItem onClick={handleCopyImageLink}>
         Copiar link <FaRegCopy />
-      </ContextMenuItem>
-      <ContextMenuItem onClick={handleDownloadImage}>
+      </ContextItem>
+      <ContextItem onClick={handleDownloadImage}>
         Download <BsDownload />
-      </ContextMenuItem>
+      </ContextItem>
     </ContextMenuContent>
-  );
+  ));
 
   return (
-    <Container>
-      <td>
-        <ContextMenu>
-          <ContextMenuTrigger>
-            <DialogTrigger>
-              <img src={src} alt={name} />
-            </DialogTrigger>
-          </ContextMenuTrigger>
+    <Dialog.Root>
+      <Context.Root>
+        <Context.Trigger>
+          <Dialog.Trigger className="flex w-full justify-center items-center outline-none transition ring-zinc-400 hover:opacity-70 focus-visible:ring-2">
+            <img src={src} alt={name} className="w-12 h-12 rounded-full" />
+          </Dialog.Trigger>
+        </Context.Trigger>
+        <Context.Portal>
           <ContextContent />
-        </ContextMenu>
-        <DialogOverlay />
-        <DialogContent>
-          <ContextMenu>
-            <ContextMenuTrigger>
-              <img src={src} alt={name} />
-            </ContextMenuTrigger>
+        </Context.Portal>
+      </Context.Root>
+      <Dialog.Portal>
+        <Dialog.Overlay className="bg-black/50 fixed inset-0 opacity-0 animate-fade" />
+        <DialogContent
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          style={{ translateX: "-50%", translateY: "-50%" }}
+          className="fixed top-1/2 left-1/2 outline-none w-64 h-64"
+        >
+          <Context.Root>
+            <Context.Trigger>
+              <img src={src} alt={name} className="rounded-md" />
+            </Context.Trigger>
             <ContextContent />
-          </ContextMenu>
+          </Context.Root>
         </DialogContent>
-      </td>
-    </Container>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }
