@@ -1,31 +1,33 @@
 import { Ionicons } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { useTheme } from "styled-components/native";
+import { useColorScheme } from "nativewind";
+import type { WithdrawStackParamsList } from "src/@types/routes/ParamsList/App/Withdraw";
 
-import { Accepted } from "@encontrei/screens/App/Withdraw/Accepted";
-import { Refused } from "@encontrei/screens/App/Withdraw/Refused";
+// import { Accepted } from "@encontrei/screens/App/Withdraw/Accepted";
+// import { Refused } from "@encontrei/screens/App/Withdraw/Refused";
 import { Sent } from "@encontrei/screens/App/Withdraw/Sent";
-import type { WithdrawStackParamsList } from "@encontrei/types/routes/ParamsList/App/Withdraw";
+import { colors } from "@encontrei/tailwind-config";
 
 const Stack = createMaterialTopTabNavigator<WithdrawStackParamsList>();
 
 export function WithdrawStack() {
-  const theme = useTheme();
+  const { colorScheme } = useColorScheme();
 
   return (
     <Stack.Navigator
       initialRouteName="Sent"
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: theme.colors.mauve1,
+          backgroundColor:
+            colorScheme === "dark" ? colors.zinc[900] : colors.zinc[50],
         },
         tabBarLabelStyle: {
           textTransform: "capitalize",
         },
-        tabBarActiveTintColor: theme.colors.violet9,
-        tabBarInactiveTintColor: theme.colors.mauve12,
+        tabBarActiveTintColor: colors.violet[600],
+        tabBarInactiveTintColor: colors.zinc[900],
         tabBarIndicatorStyle: {
-          backgroundColor: theme.colors.violet9,
+          backgroundColor: colors.violet[600],
         },
       }}
     >
@@ -38,12 +40,12 @@ export function WithdrawStack() {
             <Ionicons
               name="paper-plane-outline"
               size={24}
-              color={focused ? theme.colors.violet9 : theme.colors.mauve12}
+              color={focused ? colors.violet[600] : colors.zinc[900]}
             />
           ),
         }}
       />
-      <Stack.Screen
+      {/*       <Stack.Screen
         name="Accepted"
         component={Accepted}
         options={{
@@ -52,7 +54,7 @@ export function WithdrawStack() {
             <Ionicons
               name="checkmark"
               size={24}
-              color={focused ? theme.colors.violet9 : theme.colors.mauve12}
+              color={focused ? colors.violet[600] : colors.zinc[900]}
             />
           ),
         }}
@@ -66,11 +68,11 @@ export function WithdrawStack() {
             <Ionicons
               name="close-outline"
               size={24}
-              color={focused ? theme.colors.violet9 : theme.colors.mauve12}
+              color={focused ? colors.violet[600] : colors.zinc[900]}
             />
           ),
         }}
-      />
+      /> */}
     </Stack.Navigator>
   );
 }

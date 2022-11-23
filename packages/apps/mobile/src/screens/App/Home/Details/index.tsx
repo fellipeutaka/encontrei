@@ -1,5 +1,12 @@
 import { useRef, useState } from "react";
-import { Animated } from "react-native";
+import {
+  Animated,
+  ScrollView,
+  TouchableOpacity,
+  View,
+  Dimensions,
+  Text,
+} from "react-native";
 import {
   PinchGestureHandler,
   State,
@@ -9,37 +16,17 @@ import {
 
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "styled-components/native";
 
-import Button from "@encontrei/components/Controllers/Button";
+import type { InventoryWithdraw } from "@encontrei/@types/InventoryWithdraw";
+import * as Button from "@encontrei/components/Controllers/Button";
 import { useHomeRouteParams } from "@encontrei/hooks/useHomeRouteParams";
 import { supabase } from "@encontrei/lib/supabase";
-import type { InventoryWithdraw } from "@encontrei/types/InventoryWithdraw";
 import { formatDate } from "@encontrei/utils/formatDate";
 import Toast from "@encontrei/utils/toast";
 
-import {
-  BackButton,
-  Container,
-  Content,
-  DateTimeAndLocation,
-  Description,
-  DescriptionContent,
-  GroupTitleAndDescription,
-  Image,
-  Info,
-  Label,
-  Row,
-  Scroll,
-  SubTitle,
-  Title,
-  TitleAndCategory,
-} from "./styles";
-
-export default function Details() {
-  const [loading, setLoading] = useState(false);
-  const theme = useTheme();
-  const navigation = useNavigation();
+export function Details() {
+  const [isRequesting, setIsRequesting] = useState(false);
+  const { goBack } = useNavigation();
   const { params } = useHomeRouteParams<"Details">();
   const includedAt = formatDate(params.includedAt);
   const imageScaleRef = useRef(new Animated.Value(1));
@@ -66,7 +53,7 @@ export default function Details() {
   };
 
   async function handleRequestItem() {
-    setLoading(true);
+    setIsRequesting(true);
     try {
       const userId = supabase.auth.user()?.id;
 
@@ -81,7 +68,7 @@ export default function Details() {
 
       if (data?.length && data?.length > 0) {
         Toast("Erro", "Você já solicitou por esse item");
-        setLoading(false);
+        setIsRequesting(false);
       } else {
         await supabase
           .from<InventoryWithdraw>("inventoryWithdraw")
@@ -91,77 +78,91 @@ export default function Details() {
           })
           .throwOnError();
         Toast("Sucesso", "Enviado com sucesso");
-        navigation.goBack();
+        goBack();
       }
     } catch (err) {
       Toast("Erro", "Ocorreu um erro. Tente novamente mais tarde");
-      setLoading(false);
+      setIsRequesting(false);
       console.error(err);
     }
   }
 
   return (
-    <Container>
-      <BackButton onPress={() => navigation.goBack()}>
+    <View className="flex-1 bg-zinc-50 dark:bg-zinc-900">
+      <TouchableOpacity
+        className="absolute top-12 left-3 z-50 w-8 h-8 justify-center items-center rounded-full bg-black/20"
+        onPress={goBack}
+      >
         <Feather name="arrow-left" size={24} color="white" />
-      </BackButton>
-      <Scroll>
+      </TouchableOpacity>
+      <ScrollView>
         <PinchGestureHandler
           onGestureEvent={onPinchEvent}
           onHandlerStateChange={onPinchStateChange}
         >
-          <Image
+          <Animated.Image
             source={{ uri: params.photoUrl }}
-            style={{ transform: [{ scale: imageScaleRef.current }] }}
+            style={{
+              width: Dimensions.get("screen").width,
+              height: Dimensions.get("screen").height,
+              zIndex: 99,
+              transform: [{ scale: imageScaleRef.current }],
+            }}
           />
         </PinchGestureHandler>
-        <Content>
-          <Info>
-            <GroupTitleAndDescription>
-              <TitleAndCategory>
-                <Title style={{ maxWidth: "85%" }}>{params.name}</Title>
-                <Row>
-                  <Feather name="cpu" size={16} color={theme.colors.mauve10} />
-                  <SubTitle>{params.category}</SubTitle>
-                </Row>
-              </TitleAndCategory>
-              <Description>
-                <Title>Descrição</Title>
-                <DescriptionContent>{params.description}</DescriptionContent>
-              </Description>
-            </GroupTitleAndDescription>
-            <DateTimeAndLocation>
-              <Row>
-                <Feather
-                  name="calendar"
-                  size={16}
-                  color={theme.colors.mauve10}
-                />
-                <Label>{includedAt.date}</Label>
-              </Row>
-              <Row style={{ marginVertical: 8 }}>
-                <Feather name="clock" size={16} color={theme.colors.mauve10} />
-                <Label>{includedAt.hour}</Label>
-              </Row>
-              <Row>
-                <Feather
-                  name="map-pin"
-                  size={16}
-                  color={theme.colors.mauve10}
-                />
-                <Label>{params.local}</Label>
-              </Row>
-            </DateTimeAndLocation>
-          </Info>
-          <Button
-            style={{ width: "80%" }}
-            isLoading={loading}
+        <View className="flex-1 w-full h-full justify-between items-center pt-9 pb-8">
+          <View className="w-4/5 mb-8 flex-row justify-between">
+            <View>
+              <View>
+                <Text className="max-w-[80%] text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+                  {params.name}
+                </Text>
+                <View className="flex-row items-center">
+                  <Feather name="cpu" className="w-4 h4 text-zinc-600" />
+                  <Text className="text-xl ml-1.5 text-zinc-800 dark:text-zinc-100">
+                    {params.category}
+                  </Text>
+                </View>
+              </View>
+              <View className="mt-12">
+                <Text className="max-w-[80%] text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+                  Descrição
+                </Text>
+                <Text className="text-xl text-zinc-800 dark:text-zinc-100">
+                  {params.description}
+                </Text>
+              </View>
+            </View>
+            <View className="absolute right-0">
+              <View className="flex-row items-center">
+                <Feather name="calendar" className="w-4 h4 text-zinc-600" />
+                <Text className="text-base ml-1.5 text-zinc-800 dark:text-zinc-100">
+                  {includedAt.date}
+                </Text>
+              </View>
+              <View className="flex-row items-center my-2">
+                <Feather name="clock" className="w-4 h4 text-zinc-600" />
+                <Text className="text-base ml-1.5 text-zinc-800 dark:text-zinc-100">
+                  {includedAt.hour}
+                </Text>
+              </View>
+              <View className="flex-row items-center">
+                <Feather name="map-pin" className="w-4 h4 text-zinc-600" />
+                <Text className="text-base ml-1.5 text-zinc-800 dark:text-zinc-100">
+                  {params.local}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <Button.Root
+            className="w-4/5"
+            isLoading={isRequesting}
             onPress={handleRequestItem}
           >
-            Solicitar
-          </Button>
-        </Content>
-      </Scroll>
-    </Container>
+            <Button.Text>Solicitar</Button.Text>
+          </Button.Root>
+        </View>
+      </ScrollView>
+    </View>
   );
 }

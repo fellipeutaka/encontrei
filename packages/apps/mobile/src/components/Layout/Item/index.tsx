@@ -1,59 +1,61 @@
+import { Image, Text, TouchableOpacity, View } from "react-native";
+
 import { Feather, Ionicons } from "@expo/vector-icons";
-import { useTheme } from "styled-components/native";
+import { useColorScheme } from "nativewind";
 
-import {
-  Container,
-  DetailsButton,
-  InfoContainer,
-  Location,
-  LocationContainer,
-  Photo,
-  TextContainer,
-  Title,
-} from "./styles";
+import { colors } from "@encontrei/tailwind-config";
 
-interface ItemProps {
+type ItemProps = {
   photoUrl: string;
   title: string;
   location: string;
   onPress: () => void;
   rightIcon?: JSX.Element;
-}
+};
 
-export default function Item({
+export function Item({
   title,
   location,
   photoUrl,
   onPress,
   rightIcon,
 }: ItemProps) {
-  const theme = useTheme();
+  const { colorScheme } = useColorScheme();
 
   return (
-    <Container>
-      <InfoContainer>
-        <Photo
+    <View className="flex-row justify-between items-center w-full h-24 px-3 my-3 rounded-lg border-2 border-zinc-600">
+      <View className="flex-row justify-center items-center">
+        <Image
+          className="w-12 h-12 rounded-full"
           source={{
             uri: photoUrl,
           }}
         />
-        <TextContainer>
-          <Title>{title}</Title>
-          <LocationContainer>
+        <View className="ml-3 py-3">
+          <Text className="text-zinc-900 dark:text-zinc-50 text-xl max-w-[10rem]">
+            {title}
+          </Text>
+          <View className="flex-row items-center">
             <Ionicons
               name="location-outline"
               size={16}
-              color={theme.colors.mauve12}
+              color={
+                colorScheme === "dark" ? colors.zinc[50] : colors.zinc[900]
+              }
             />
-            <Location>{location}</Location>
-          </LocationContainer>
-        </TextContainer>
-      </InfoContainer>
-      <DetailsButton onPress={onPress}>
-        {rightIcon || (
-          <Feather name="eye" size={24} color={theme.colors.mauve12} />
+            <Text className="text-zinc-900 dark:text-zinc-50">{location}</Text>
+          </View>
+        </View>
+      </View>
+      <TouchableOpacity onPress={onPress}>
+        {rightIcon ?? (
+          <Feather
+            name="eye"
+            size={24}
+            color={colorScheme === "dark" ? colors.zinc[50] : colors.zinc[900]}
+          />
         )}
-      </DetailsButton>
-    </Container>
+      </TouchableOpacity>
+    </View>
   );
 }

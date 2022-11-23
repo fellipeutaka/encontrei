@@ -2,7 +2,7 @@ import { FlatList, FlatListProps } from "react-native";
 
 import styled from "styled-components/native";
 
-import { InventoryWithdrawItems } from "@encontrei/types/InventoryWithdraw";
+import { InventoryWithdrawItems } from "src/@types/InventoryWithdraw";
 
 export const ItemList = styled(
   FlatList as new (

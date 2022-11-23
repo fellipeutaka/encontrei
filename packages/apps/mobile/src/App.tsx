@@ -1,31 +1,31 @@
 import { useEffect, useState } from "react";
+import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { NavigationContainer } from "@react-navigation/native";
 import type { User } from "@supabase/supabase-js";
 import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "nativewind";
 
-import { useCustomTheme } from "@encontrei/hooks/useCustomTheme";
 import { supabase } from "@encontrei/lib/supabase";
 import { AppStack } from "@encontrei/routes/App";
 import { AuthStack } from "@encontrei/routes/Auth";
 import { Splash } from "@encontrei/screens/Splash";
 
 export function App() {
-  const { currentTheme } = useCustomTheme();
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const isAuthenticated = !!user;
+  const [isLoading, setIsLoading] = useState(true);
+  const { colorScheme } = useColorScheme();
 
   useEffect(() => {
-    setUser(supabase.auth.session()?.user || null);
+    setUser(supabase.auth.session()?.user ?? null);
 
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
     });
 
     setTimeout(() => {
-      setLoading(false);
+      setIsLoading(false);
     }, 2500);
 
     return () => {
@@ -33,28 +33,15 @@ export function App() {
     };
   }, []);
 
-  if (loading) {
-    return (
-      <>
-        <StatusBar
-          style={currentTheme === "dark" ? "light" : "dark"}
-          translucent
-          backgroundColor="transparent"
-        />
-        <Splash />
-      </>
-    );
-  }
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         <StatusBar
-          style={currentTheme === "dark" ? "light" : "dark"}
+          style={colorScheme === "dark" ? "light" : "dark"}
           translucent
           backgroundColor="transparent"
         />
-        {isAuthenticated ? <AppStack /> : <AuthStack />}
+        {isLoading ? <Splash /> : user ? <AppStack /> : <AuthStack />}
       </NavigationContainer>
     </GestureHandlerRootView>
   );

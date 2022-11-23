@@ -11,7 +11,7 @@ import { Container, ItemsContainer } from "@encontrei/screens/App/Home/styles";
 import {
   InventoryWithdrawAccepted,
   InventoryWithdrawAcceptedItems,
-} from "@encontrei/types/InventoryWithdraw";
+} from "src/@types/InventoryWithdraw";
 import { capitalizeFirstLetter } from "@encontrei/utils/capitalizeFirstLetter";
 import { getImageUrl } from "@encontrei/utils/getImageUrl";
 

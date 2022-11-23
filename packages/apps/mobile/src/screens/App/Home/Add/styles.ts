@@ -2,7 +2,7 @@ import { Dimensions, TextInput } from "react-native";
 
 import styled from "styled-components/native";
 
-import ButtonComponent from "@encontrei/components/Controllers/Button";
+import ButtonComponent from "@encontrei/components/Controllers/Select";
 
 export const Container = styled.ScrollView.attrs({
   showsVerticalScrollIndicator: false,

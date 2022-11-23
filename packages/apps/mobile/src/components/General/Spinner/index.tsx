@@ -1,18 +1,7 @@
 import { ActivityIndicator, ActivityIndicatorProps } from "react-native";
 
-import { useTheme } from "styled-components/native";
+import { colors } from "@encontrei/tailwind-config";
 
-export default function Spinner({
-  size = "large",
-  color,
-  ...rest
-}: ActivityIndicatorProps) {
-  const theme = useTheme();
-  return (
-    <ActivityIndicator
-      size={size}
-      color={color || theme.colors.violet9}
-      {...rest}
-    />
-  );
+export function Spinner({ size = "large", ...rest }: ActivityIndicatorProps) {
+  return <ActivityIndicator size={size} color={colors.violet[600]} {...rest} />;
 }

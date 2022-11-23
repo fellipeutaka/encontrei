@@ -1,18 +1,18 @@
 import {
   Keyboard,
+  KeyboardAvoidingView as Container,
   KeyboardAvoidingViewProps,
   Platform,
   TouchableWithoutFeedback,
 } from "react-native";
 
-import { Container } from "./styles";
-
-export default function KeyboardAvoidingView({
+export function KeyboardAvoidingView({
   children,
   ...rest
 }: KeyboardAvoidingViewProps) {
   return (
     <Container
+      className="flex-1"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       {...rest}
     >

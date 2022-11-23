@@ -6,16 +6,13 @@ import {
 import { registerRootComponent } from "expo";
 
 import "react-native-url-polyfill/auto";
-import ThemeProvider from "@encontrei/contexts/ThemeContext";
 
 import { App } from "./src/App";
 
 function Index() {
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
+      <App />
     </SafeAreaProvider>
   );
 }

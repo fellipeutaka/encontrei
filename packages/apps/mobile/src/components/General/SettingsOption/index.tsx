@@ -1,40 +1,49 @@
+import { TouchableOpacity, View, Text } from "react-native";
+
 import { Feather } from "@expo/vector-icons";
-import { useTheme } from "styled-components/native";
 
-import { Container, OptionInfo, OptionTitle, Touchable } from "./styles";
-
-interface SettingsOptionProps {
+type SettingsOptionProps = {
   icon: JSX.Element;
   title: string;
   rightElement?: JSX.Element;
   isTouchable?: boolean;
   onPress?: () => void;
-}
+};
 
-export default function SettingsOption({
+export function SettingsOption({
   icon,
   title,
   rightElement,
   isTouchable = true,
   onPress,
 }: SettingsOptionProps) {
-  const theme = useTheme();
-
   const Option = (
     <>
-      <OptionInfo>
+      <View className="flex-row">
         {icon}
-        <OptionTitle>{title}</OptionTitle>
-      </OptionInfo>
+        <Text className="text-zinc-900 dark:text-zinc-50 ml-3">{title}</Text>
+      </View>
       {rightElement || (
-        <Feather name="chevron-right" size={20} color={theme.colors.mauve11} />
+        <Feather
+          name="chevron-right"
+          className="w-5 h-5 text-zinc-800 dark:text-zinc-100"
+        />
       )}
     </>
   );
 
   return (
-    <Container>
-      {isTouchable ? <Touchable onPress={onPress}>{Option}</Touchable> : Option}
-    </Container>
+    <View className="flex-row justify-between items-center border border-zinc-600/50 h-16">
+      {isTouchable ? (
+        <TouchableOpacity
+          className="flex-row justify-between items-center w-full h-full"
+          {...onPress}
+        >
+          {Option}
+        </TouchableOpacity>
+      ) : (
+        Option
+      )}
+    </View>
   );
 }

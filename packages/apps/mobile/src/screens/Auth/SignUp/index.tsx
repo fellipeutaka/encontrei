@@ -1,38 +1,47 @@
-import { useRef, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { View, Text, TouchableOpacity } from "react-native";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigation } from "@react-navigation/native";
-import { FormHandles } from "@unform/core";
-import { ValidationError } from "yup";
+import { z } from "zod";
 
-import Form from "@encontrei/components/Controllers/Form";
-import Input from "@encontrei/components/Controllers/Input";
-import LinkButton from "@encontrei/components/Controllers/LinkButton";
-import KeyboardAvoidingView from "@encontrei/components/General/KeyboardAvoidingView";
+import * as Button from "@encontrei/components/Controllers/Button";
+import {
+  UserField,
+  EmailField,
+  PasswordField,
+} from "@encontrei/components/Controllers/TextField";
+import { KeyboardAvoidingView } from "@encontrei/components/General/KeyboardAvoidingView";
+import { Label } from "@encontrei/components/General/Label";
 import { supabase } from "@encontrei/lib/supabase";
-import { AuthStackNavigationProps } from "@encontrei/types/routes/NavigationProps/Auth";
-import Toast from "@encontrei/utils/toast";
 import { vibrate } from "@encontrei/utils/vibrate";
-import { signUpSchema } from "@encontrei/utils/yupSchemas";
+import { name, email, password } from "@encontrei/utils/zodSchemas";
 
-import { Button, Container, Label, Title } from "./styles";
-
-interface FormData {
+type FormData = {
   name: string;
   email: string;
   password: string;
-}
+};
+
+const signUpSchema = z.object({
+  name,
+  email,
+  password,
+});
 
 export function SignUp() {
-  const formRef = useRef<FormHandles>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigation = useNavigation<AuthStackNavigationProps>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({
+    resolver: zodResolver(signUpSchema),
+  });
+  const navigation = useNavigation();
 
-  async function handleSignUp({ name, email, password }: FormData) {
+  async function signUp({ name, email, password }: FormData) {
     try {
-      formRef.current?.setErrors({});
-      await signUpSchema.validate({ name, email, password });
-      setIsLoading(true);
-      const { error } = await supabase.auth.signUp(
+      await supabase.auth.signUp(
         {
           email,
           password,
@@ -43,47 +52,95 @@ export function SignUp() {
           },
         }
       );
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      Toast("Sucesso", "Por favor, confirme o seu e-mail");
     } catch (err) {
-      if (err instanceof ValidationError) {
-        const { message, path } = err;
-        formRef.current?.setFieldError(path || "", message);
-        vibrate();
-        Toast("Error", err.message);
-      } else {
-        console.error(err);
-      }
-    } finally {
-      setIsLoading(false);
+      console.error(err);
     }
   }
 
   return (
     <KeyboardAvoidingView>
-      <Container>
-        <Title>Crie sua conta</Title>
-        <Form ref={formRef} onSubmit={handleSignUp}>
-          <Label>Nome</Label>
-          <Input type="user" name="name" />
-          <Label>E-mail</Label>
-          <Input type="email" name="email" />
-          <Label>Senha</Label>
-          <Input type="password" name="password" />
-        </Form>
-        <Button
-          onPress={() => formRef.current?.submitForm()}
-          isLoading={isLoading}
+      <View className="flex-1 justify-center items-center bg-zinc-50 dark:bg-zinc-900 p-8">
+        <Text className="text-4xl font-semibold text-zinc-900 dark:text-zinc-50 mb-4">
+          Crie sua conta
+        </Text>
+        <View className="w-full">
+          <Label className="my-4">Nome</Label>
+          <Controller
+            control={control}
+            name="name"
+            render={({
+              field: { onChange, ...field },
+              fieldState: { error },
+            }) => (
+              <UserField
+                placeholder="Nome"
+                error={Boolean(error)}
+                onChangeText={onChange}
+                {...field}
+              />
+            )}
+          />
+          {errors.name && (
+            <Text className="text-red-600 font-semibold my-1">
+              {errors.name.message}
+            </Text>
+          )}
+          <Label className="my-4">E-mail</Label>
+          <Controller
+            control={control}
+            name="email"
+            render={({
+              field: { onChange, ...field },
+              fieldState: { error },
+            }) => (
+              <EmailField
+                placeholder="E-mail"
+                error={Boolean(error)}
+                onChangeText={onChange}
+                {...field}
+              />
+            )}
+          />
+          {errors.email && (
+            <Text className="text-red-600 font-semibold my-1">
+              {errors.email.message}
+            </Text>
+          )}
+          <Label className="my-4">Senha</Label>
+          <Controller
+            control={control}
+            name="password"
+            render={({
+              field: { onChange, ...field },
+              fieldState: { error },
+            }) => (
+              <PasswordField
+                placeholder="Senha"
+                error={Boolean(error)}
+                onChangeText={onChange}
+                {...field}
+              />
+            )}
+          />
+          {errors.password && (
+            <Text className="text-red-600 font-semibold my-1">
+              {errors.password.message}
+            </Text>
+          )}
+        </View>
+        <Button.Root
+          className="mt-12 mb-4 h-16 rounded-full"
+          onPress={handleSubmit(signUp, () => vibrate())}
+          isLoading={isSubmitting}
         >
-          Criar
-        </Button>
-        <LinkButton onPress={() => navigation.navigate("SignIn")}>
-          Já tem uma conta? Entre agora
-        </LinkButton>
-      </Container>
+          <Button.Text>Entrar</Button.Text>
+        </Button.Root>
+        <TouchableOpacity className="mt-4" onPress={navigation.goBack}>
+          <Text className="font-medium text-zinc-900 dark:text-zinc-50">
+            Já tem uma conta? Entre agora
+          </Text>
+        </TouchableOpacity>
+      </View>
     </KeyboardAvoidingView>
   );
 }

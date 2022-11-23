@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 
 import { Feather } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigation } from "@react-navigation/native";
 import {
   launchCameraAsync,
@@ -8,19 +10,28 @@ import {
   MediaTypeOptions,
   requestCameraPermissionsAsync,
 } from "expo-image-picker";
-import { ValidationError } from "yup";
+import { z } from "zod";
 
-import Select from "@encontrei/components/Controllers/Select";
-import KeyboardAvoidingView from "@encontrei/components/General/KeyboardAvoidingView";
-import Label from "@encontrei/components/General/Label";
+import type { InventoryFoundInsert } from "@encontrei/@types/InventoryFound";
+import { Select } from "@encontrei/components/Controllers/Select";
+import * as TextField from "@encontrei/components/Controllers/TextField";
+import { KeyboardAvoidingView } from "@encontrei/components/General/KeyboardAvoidingView";
+import { Label } from "@encontrei/components/General/Label";
 import { supabase } from "@encontrei/lib/supabase";
-import { InventoryFoundInsert } from "@encontrei/types/InventoryFound";
+import { categories, ICategory } from "@encontrei/utils/category";
 import { createImageFormData } from "@encontrei/utils/createImageFormData";
 import { getUnixTimestampInSeconds } from "@encontrei/utils/getUnixTimestampInSeconds";
+import { ILocal } from "@encontrei/utils/local";
 import { removeSpecialCharacters } from "@encontrei/utils/removeSpecialCharacters";
 import Toast from "@encontrei/utils/toast";
 import { vibrate } from "@encontrei/utils/vibrate";
-import { addSchema } from "@encontrei/utils/yupSchemas";
+import {
+  name,
+  description,
+  category,
+  local,
+  photoUrl,
+} from "@encontrei/utils/zodSchemas";
 
 import {
   ButtonsContainer,
@@ -32,41 +43,35 @@ import {
   Text,
 } from "./styles";
 
-const categories = [
-  "eletrônico",
-  "material escolar",
-  "roupa",
-  "outros",
-] as const;
-type Category = typeof categories[number];
-
-const locations = ["pátio", "quadra", "cantina", "sala 9", "lab 3"] as const;
-type Local = typeof locations[number];
-
-interface Item {
+type FormData = {
   name: string;
   description: string;
-  category: Category | null;
-  local: Local | null;
+  category: ICategory | null;
+  local: ILocal | null;
   photoUrl: string | null;
-}
+};
 
-export default function Add() {
+const addSchema = z.object({
+  name,
+  description,
+  category,
+  local,
+  photoUrl,
+});
+
+export function Add() {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setValue,
+  } = useForm<FormData>({
+    resolver: zodResolver(addSchema),
+  });
   const navigation = useNavigation();
 
-  const [loading, setLoading] = useState(false);
-  const [item, setItem] = useState<Item>({
-    name: "",
-    description: "",
-    category: null,
-    local: null,
-    photoUrl: null,
-  });
-
-  async function handleAddNewItem() {
+  async function addNewItem(item: FormData) {
     try {
-      await addSchema.validate(item);
-      setLoading(true);
       const imageExtension = item.photoUrl!.split(".").pop() || "jpeg";
       const photoName = `${removeSpecialCharacters(
         item.name
@@ -105,14 +110,8 @@ export default function Add() {
       setLoading(false);
       navigation.goBack();
     } catch (err) {
-      if (err instanceof ValidationError) {
-        vibrate();
-        Toast("Error", err.message);
-      } else {
-        console.error(err);
-        Toast("Erro", "Ocorreu um erro inesperado");
-      }
-      setLoading(false);
+      console.error(err);
+      Toast("Erro", "Ocorreu um erro inesperado");
     }
   }
 
@@ -125,7 +124,7 @@ export default function Add() {
     });
 
     if (!result.cancelled) {
-      setItem((state) => ({ ...state, photoUrl: result.uri }));
+      setValue("photoUrl", result.uri);
     }
   }
 
@@ -141,10 +140,7 @@ export default function Add() {
       });
 
       if (!result.cancelled) {
-        setItem((state) => ({
-          ...state,
-          photoUrl: result.uri,
-        }));
+        setValue("photoUrl", result.uri);
       }
     }
   }
@@ -152,20 +148,52 @@ export default function Add() {
   return (
     <KeyboardAvoidingView>
       <Container>
-        <Label>Nome</Label>
-        <Input
-          value={item.name}
-          onChangeText={(name) => setItem((state) => ({ ...state, name }))}
-          maxLength={24}
+        <Label className="my-4">Nome</Label>
+        <Controller
+          control={control}
+          name="name"
+          render={({
+            field: { onChange, ...field },
+            fieldState: { error },
+          }) => (
+            <TextField.Root>
+              <TextField.Input
+                error={Boolean(error)}
+                onChangeText={onChange}
+                maxLength={24}
+                {...field}
+              />
+            </TextField.Root>
+          )}
         />
-        <Label>Descrição</Label>
-        <Input
-          value={item.description}
-          onChangeText={(description) =>
-            setItem((state) => ({ ...state, description }))
-          }
-          maxLength={48}
+        {errors.name && (
+          <Text className="text-red-600 font-semibold my-1">
+            {errors.name.message}
+          </Text>
+        )}
+        <Label className="my-4">Descrição</Label>
+        <Controller
+          control={control}
+          name="description"
+          render={({
+            field: { onChange, ...field },
+            fieldState: { error },
+          }) => (
+            <TextField.Root>
+              <TextField.Input
+                error={Boolean(error)}
+                onChangeText={onChange}
+                maxLength={48}
+                {...field}
+              />
+            </TextField.Root>
+          )}
         />
+        {errors.description && (
+          <Text className="text-red-600 font-semibold my-1">
+            {errors.description.message}
+          </Text>
+        )}
         <Label>Categoria</Label>
         <Select
           value={item.category}
@@ -202,7 +230,10 @@ export default function Add() {
             <Feather name="camera" size={20} color="white" />
           </PhotoButton>
         </ButtonsContainer>
-        <SubmitButton isLoading={loading} onPress={handleAddNewItem}>
+        <SubmitButton
+          isLoading={isSubmitting}
+          onPress={handleSubmit(addNewItem)}
+        >
           Enviar
         </SubmitButton>
       </Container>

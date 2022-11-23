@@ -6,7 +6,7 @@ import { About } from "@encontrei/screens/App/Settings/About";
 import { Account } from "@encontrei/screens/App/Settings/Account";
 import { Appearance } from "@encontrei/screens/App/Settings/Appearance";
 import { Notifications } from "@encontrei/screens/App/Settings/Notifications";
-import type { SettingsStackParamsList } from "@encontrei/types/routes/ParamsList/App/Settings";
+import type { SettingsStackParamsList } from "src/@types/routes/ParamsList/App/Settings";
 
 const Stack = createNativeStackNavigator<SettingsStackParamsList>();
 

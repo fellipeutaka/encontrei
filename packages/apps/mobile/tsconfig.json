@@ -1,41 +1,17 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "typescript-styled-plugin",
-        "lint": {
-          "validProperties": [
-            "aspect-ratio",
-            "elevation",
-            "margin-vertical",
-            "margin-horizontal",
-            "padding-horizontal",
-            "padding-vertical",
-            "resize-mode",
-            "shadow-color",
-            "shadow-opacity",
-            "shadow-offset",
-            "shadow-radius",
-            "text-align-vertical",
-            "tint-color"
-          ]
-        }
-      }
-    ],
     "baseUrl": ".",
     "paths": {
       "@encontrei/components/*": ["./src/components/*"],
       "@encontrei/screens/*": ["./src/screens/*"],
       "@encontrei/routes/*": ["./src/routes/*"],
-      "@encontrei/types/*": ["./src/types/*"],
+      "@encontrei/@types/*": ["./src/@types/*"],
       "@encontrei/contexts/*": ["./src/contexts/*"],
       "@encontrei/hooks/*": ["./src/hooks/*"],
-      "@encontrei/themes/*": ["./src/themes/*"],
-      "@encontrei/themes": ["./src/themes"],
       "@encontrei/utils/*": ["./src/utils/*"],
       "@encontrei/lib/*": ["./src/lib/*"],
-      "@encontrei/assets/*": ["./assets/*"]
+      "@encontrei/assets/*": ["./src/assets/*"]
     },
     "strict": true
   }
