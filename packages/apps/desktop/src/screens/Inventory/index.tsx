@@ -10,6 +10,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { clsx } from "clsx";
 import { Reorder, motion } from "framer-motion";
 
 import type { Inventory as IInventory } from "@encontrei/@types/Inventory";
@@ -225,7 +226,18 @@ export function Inventory() {
           </Button>
         </div>
       </header>
-      {items ? (
+      {!items ? (
+        <SpinnerLoader size={48} />
+      ) : items.length === 0 ? (
+        <motion.div
+          className="min-w-[64rem] w-full max-w-7xl animate-fade"
+          animate={{ y: 64 }}
+        >
+          <span className="text-2xl font-semibold">
+            Não há nenhum item no inventário
+          </span>
+        </motion.div>
+      ) : (
         <motion.div
           className="min-w-[64rem] w-full max-w-7xl overflow-y-scroll overflow-x-hidden animate-fade"
           animate={{ y: 64 }}
@@ -297,7 +309,16 @@ export function Inventory() {
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="border border-zinc-600 dark:bg-zinc-800 bg-zinc-400 p-2 min-w-[64px] max-w-md transition duration-300"
+                      className={clsx(
+                        "border border-zinc-600 dark:bg-zinc-800 bg-zinc-400 transition duration-300",
+                        {
+                          "h-[4.5rem] w-16": cell.column.id === "photoFilename",
+                        },
+                        {
+                          "p-2 min-w-[64px] max-w-md":
+                            cell.column.id !== "photoFilename",
+                        }
+                      )}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -310,8 +331,6 @@ export function Inventory() {
             </tbody>
           </Reorder.Group>
         </motion.div>
-      ) : (
-        <SpinnerLoader size={48} />
       )}
     </main>
   );

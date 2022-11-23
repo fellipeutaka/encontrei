@@ -15,19 +15,19 @@ import { Button } from "@encontrei/components/Button";
 import { Select } from "@encontrei/components/Select";
 import * as TextField from "@encontrei/components/TextField";
 import { supabase } from "@encontrei/lib/supabase";
-import { ICategory, categories } from "@encontrei/utils/categories";
+import { ICategory, categories } from "@encontrei/utils/category";
 import { getUnixTimestampInSeconds } from "@encontrei/utils/getUnixTimestampInSeconds";
 import { handleScape } from "@encontrei/utils/handleScape";
 import { ILocal, locals } from "@encontrei/utils/local";
 import { removeSpecialCharacters } from "@encontrei/utils/removeSpecialCharacters";
 
-interface IInputs {
+type FormData = {
   name: string;
   description: string;
   category: ICategory;
   local: ILocal;
   photo: ImageListType;
-}
+};
 
 const DialogContent = motion(Dialog.Content);
 
@@ -56,12 +56,13 @@ const itemSchema = z.object({
     })
     .trim()
     .min(1, "Local é obrigatório!"),
-  photo: z
-    .string({
-      required_error: "Imagem é obrigatória!",
-    })
-    .trim()
-    .min(1, "Imagem é obrigatória!"),
+  photo: z.array(
+    z.object({
+      dataURL: z.string(),
+      file: z.instanceof(File),
+    }),
+    { required_error: "Foto é obrigatória!" }
+  ),
 });
 
 export function CreateItemDialog() {
@@ -70,11 +71,11 @@ export function CreateItemDialog() {
     control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<IInputs>({
+  } = useForm<FormData>({
     resolver: zodResolver(itemSchema),
   });
 
-  async function createItem(data: IInputs) {
+  async function createItem(data: FormData) {
     const imageFile = data.photo[0].file;
     if (!imageFile) {
       return toast.error("Não foi possível encontrar sua foto");
@@ -307,7 +308,7 @@ export function CreateItemDialog() {
                             <img
                               src={image.dataURL}
                               alt={image.file?.name}
-                              className="w-full h-full absolute inset-0 object-cover cursor-pointer"
+                              className="w-full h-full absolute inset-0 object-cover cursor-pointer bg-zinc-900"
                               onClick={onImageUpload}
                             />
                           </div>

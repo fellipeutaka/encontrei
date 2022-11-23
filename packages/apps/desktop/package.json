@@ -1,8 +1,7 @@
 {
   "name": "@encontrei/desktop",
-  "private": true,
-  "version": "1.6.0",
   "description": "Encontrei Desktop App",
+  "version": "1.6.0",
   "author": {
     "name": "Fellipe Utaka",
     "email": "fellipeutaka@gmail.com"
@@ -14,6 +13,7 @@
     }
   ],
   "license": "MIT",
+  "private": true,
   "main": "dist-electron/electron/main/index.js",
   "scripts": {
     "dev": "vite",
