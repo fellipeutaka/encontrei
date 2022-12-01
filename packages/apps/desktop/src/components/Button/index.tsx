@@ -3,9 +3,9 @@ import { AiOutlineLoading } from "react-icons/ai";
 
 import { twMerge } from "tailwind-merge";
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export type ButtonProps = {
   isLoading?: boolean;
-}
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ isLoading, ...props }, ref) => {

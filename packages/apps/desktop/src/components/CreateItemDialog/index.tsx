@@ -1,7 +1,7 @@
 import { useForm, Controller } from "react-hook-form";
 import { AiOutlineClose } from "react-icons/ai";
 import { FiPlus } from "react-icons/fi";
-import ImageUploading, { ImageListType } from "react-images-uploading";
+import ImageUploading from "react-images-uploading";
 import { toast } from "react-toastify";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,19 +15,11 @@ import { Button } from "@encontrei/components/Button";
 import { Select } from "@encontrei/components/Select";
 import * as TextField from "@encontrei/components/TextField";
 import { supabase } from "@encontrei/lib/supabase";
-import { ICategory, categories } from "@encontrei/utils/category";
+import { categories } from "@encontrei/utils/category";
 import { getUnixTimestampInSeconds } from "@encontrei/utils/getUnixTimestampInSeconds";
 import { handleScape } from "@encontrei/utils/handleScape";
-import { ILocal, locals } from "@encontrei/utils/local";
+import { locals } from "@encontrei/utils/local";
 import { removeSpecialCharacters } from "@encontrei/utils/removeSpecialCharacters";
-
-type FormData = {
-  name: string;
-  description: string;
-  category: ICategory;
-  local: ILocal;
-  photo: ImageListType;
-};
 
 const DialogContent = motion(Dialog.Content);
 
@@ -65,6 +57,8 @@ const itemSchema = z.object({
   ),
 });
 
+type FormData = z.output<typeof itemSchema>;
+
 export function CreateItemDialog() {
   const {
     handleSubmit,
@@ -77,9 +71,6 @@ export function CreateItemDialog() {
 
   async function createItem(data: FormData) {
     const imageFile = data.photo[0].file;
-    if (!imageFile) {
-      return toast.error("Não foi possível encontrar sua foto");
-    }
     const imageExtension = imageFile.name.split(".").pop() ?? "";
     const photoName = `${removeSpecialCharacters(
       imageFile.name.replace(/\.[^/.]+$/, "")
@@ -89,10 +80,7 @@ export function CreateItemDialog() {
       const toastPhoto = toast.loading("Enviando foto...");
       const { error: storageError } = await supabase.storage
         .from("item-photo")
-        .upload(`inventory/${photoName}`, imageFile, {
-          cacheControl: "15552000",
-          contentType: "image/" + imageExtension,
-        });
+        .upload(photoName, imageFile);
 
       if (storageError) {
         return toast.update(toastPhoto, {

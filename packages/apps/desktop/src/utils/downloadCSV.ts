@@ -17,7 +17,7 @@ export function downloadCSV<T>(data: T[], table: string) {
     ? `data:text/csv; charset=utf-8,${universalBOM + csv}`
     : csv;
   const filename = `${table}-${new Date()
-    .toLocaleDateString()
+    .toLocaleDateString("pt-BR")
     .replaceAll("/", ".")}.csv`;
 
   link.setAttribute("href", encodeURI(result));
