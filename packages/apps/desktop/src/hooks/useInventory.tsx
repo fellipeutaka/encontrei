@@ -16,65 +16,65 @@ import { downloadCSV } from "@encontrei/utils/downloadCSV";
 import { getItems } from "@encontrei/utils/getItems";
 import { getPublicUrl } from "@encontrei/utils/getPublicUrl";
 
+const columnHelper = createColumnHelper<Inventory>();
+const columns = [
+  columnHelper.display({
+    id: "select",
+    enableSorting: false,
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllRowsSelected()}
+        onCheckedChange={(e) => table.toggleAllRowsSelected(Boolean(e))}
+        className="mx-auto"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={row.getToggleSelectedHandler()}
+        className="mx-auto"
+      />
+    ),
+  }),
+  columnHelper.accessor("name", {
+    header: "Nome",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("description", {
+    header: "Descrição",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("category", {
+    header: () => "Categoria",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("local", {
+    header: () => "Local",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("includedAt", {
+    header: () => "Data",
+    cell: (info) =>
+      new Date(info.getValue()).toLocaleString("pt-BR", {
+        dateStyle: "short",
+        timeStyle: "short",
+      }),
+  }),
+  columnHelper.accessor("photoFilename", {
+    enableSorting: false,
+    header: () => "Foto",
+    cell: (info) => (
+      <ImagePreview
+        src={getPublicUrl(info.getValue())}
+        name={info.getValue()}
+      />
+    ),
+  }),
+];
+
 type Items = Inventory[] | null;
 
 export function useInventory() {
-  const columnHelper = createColumnHelper<Inventory>();
-  const columns = [
-    columnHelper.display({
-      id: "select",
-      enableSorting: false,
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllRowsSelected()}
-          onCheckedChange={(e) => table.toggleAllRowsSelected(Boolean(e))}
-          className="mx-auto"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={row.getToggleSelectedHandler()}
-          className="mx-auto"
-        />
-      ),
-    }),
-    columnHelper.accessor("name", {
-      header: "Nome",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("description", {
-      header: "Descrição",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("category", {
-      header: () => "Categoria",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("local", {
-      header: () => "Local",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("includedAt", {
-      header: () => "Data",
-      cell: (info) =>
-        new Date(info.getValue()).toLocaleString("pt-BR", {
-          dateStyle: "short",
-          timeStyle: "short",
-        }),
-    }),
-    columnHelper.accessor("photoFilename", {
-      enableSorting: false,
-      header: () => "Foto",
-      cell: (info) => (
-        <ImagePreview
-          src={getPublicUrl(info.getValue())}
-          name={info.getValue()}
-        />
-      ),
-    }),
-  ];
-
   const [items, setItems] = useState<Items>(null);
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({

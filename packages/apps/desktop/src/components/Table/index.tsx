@@ -1,7 +1,7 @@
 import { BsArrowUp } from "react-icons/bs";
 
 import { flexRender, Table as ITable } from "@tanstack/react-table";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { motion, Reorder } from "framer-motion";
 
 import { Arrow } from "@encontrei/components/Icons/Arrow";
@@ -33,7 +33,13 @@ export function Table<T>({ table, items, setItems }: TableProps<T>) {
                 <th
                   key={header.id}
                   colSpan={header.colSpan}
-                  className="border border-zinc-600 dark:bg-zinc-700 bg-zinc-200 transition duration-300 select-none"
+                  className={clsx(
+                    "border border-zinc-600 dark:bg-zinc-700 bg-zinc-200 transition duration-300 select-none",
+                    {
+                      "flex justify-center items-center py-3 border-t-transparent border-r-transparent border-l-transparent":
+                        header.column.id === "select",
+                    }
+                  )}
                 >
                   {header.column.getCanSort() ? (
                     <button
@@ -90,11 +96,16 @@ export function Table<T>({ table, items, setItems }: TableProps<T>) {
                   className={clsx(
                     "border border-zinc-600 dark:bg-zinc-800 bg-zinc-400 transition duration-300",
                     {
-                      "h-[4.5rem] w-16": cell.column.id === "photoFilename",
+                      "min-h-[4.5rem] w-16": cell.column.id === "photoFilename",
+                    },
+                    {
+                      "min-h-[4.5rem] border-none flex justify-center items-center":
+                        cell.column.id === "select",
                     },
                     {
                       "p-2 min-w-[64px] max-w-md":
-                        cell.column.id !== "photoFilename",
+                        cell.column.id !== "photoFilename" &&
+                        cell.column.id !== "select",
                     }
                   )}
                 >

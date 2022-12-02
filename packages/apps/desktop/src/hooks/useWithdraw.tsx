@@ -18,73 +18,73 @@ import { downloadCSV } from "@encontrei/utils/downloadCSV";
 import { getItems } from "@encontrei/utils/getItems";
 import { getPublicUrl } from "@encontrei/utils/getPublicUrl";
 
+const columnHelper = createColumnHelper<InventoryWithdraw>();
+const columns = [
+  columnHelper.display({
+    id: "select",
+    enableSorting: false,
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllRowsSelected()}
+        onCheckedChange={(e) => table.toggleAllRowsSelected(Boolean(e))}
+        className="mx-auto"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={row.getToggleSelectedHandler()}
+        className="mx-auto"
+      />
+    ),
+  }),
+  columnHelper.accessor("inventory.name", {
+    header: "Nome",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("inventory.description", {
+    header: "Descrição",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("inventory.category", {
+    header: () => "Categoria",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("inventory.local", {
+    header: () => "Local",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("requestedAt", {
+    header: () => "Data",
+    cell: (info) =>
+      new Date(info.getValue()).toLocaleString("pt-BR", {
+        dateStyle: "short",
+        timeStyle: "short",
+      }),
+  }),
+  columnHelper.accessor("user.name", {
+    header: () => "Usuário",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("user.email", {
+    header: () => "E-mail",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("inventory.photoFilename", {
+    enableSorting: false,
+    header: () => "Foto",
+    cell: (info) => (
+      <ImagePreview
+        src={getPublicUrl(info.getValue())}
+        name={info.getValue()}
+      />
+    ),
+  }),
+];
+
 type Items = InventoryWithdraw[] | null;
 
 export function useWithdraw() {
-  const columnHelper = createColumnHelper<InventoryWithdraw>();
-  const columns = [
-    columnHelper.display({
-      id: "select",
-      enableSorting: false,
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllRowsSelected()}
-          onCheckedChange={(e) => table.toggleAllRowsSelected(Boolean(e))}
-          className="mx-auto"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={row.getToggleSelectedHandler()}
-          className="mx-auto"
-        />
-      ),
-    }),
-    columnHelper.accessor("inventory.name", {
-      header: "Nome",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("inventory.description", {
-      header: "Descrição",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("inventory.category", {
-      header: () => "Categoria",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("inventory.local", {
-      header: () => "Local",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("requestedAt", {
-      header: () => "Data",
-      cell: (info) =>
-        new Date(info.getValue()).toLocaleString("pt-BR", {
-          dateStyle: "short",
-          timeStyle: "short",
-        }),
-    }),
-    columnHelper.accessor("user.name", {
-      header: () => "Usuário",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("user.email", {
-      header: () => "E-mail",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("inventory.photoFilename", {
-      enableSorting: false,
-      header: () => "Foto",
-      cell: (info) => (
-        <ImagePreview
-          src={getPublicUrl(info.getValue())}
-          name={info.getValue()}
-        />
-      ),
-    }),
-  ];
-
   const [items, setItems] = useState<Items>(null);
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
