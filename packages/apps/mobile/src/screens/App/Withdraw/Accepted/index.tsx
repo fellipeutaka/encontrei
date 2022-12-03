@@ -55,9 +55,7 @@ export function Accepted() {
         ...item,
         category: capitalizeFirstLetter(item.category),
         local: capitalizeFirstLetter(item.local),
-        photoFilename: getImageUrl(
-          "inventoryWithdrawAccepted/" + item.photoFilename
-        ),
+        photoFilename: getImageUrl(item.photoFilename),
         onPress() {
           void handleDeleteRequest(item.id);
         },
