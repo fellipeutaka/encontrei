@@ -1,6 +1,6 @@
 import type { ParamListBase } from "@react-navigation/native";
 
-export interface HomeStackParamsList extends ParamListBase {
+export type HomeStackParamsList = {
   List: undefined;
   Details: {
     id: string;
@@ -12,4 +12,4 @@ export interface HomeStackParamsList extends ParamListBase {
     photoUrl: string;
   };
   Add: undefined;
-}
+} & ParamListBase

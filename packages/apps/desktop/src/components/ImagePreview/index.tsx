@@ -8,7 +8,7 @@ import * as Context from "@radix-ui/react-context-menu";
 import * as Dialog from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
 
-interface ImagePreviewProps {
+type ImagePreviewProps = {
   src: string;
   name: string;
 }

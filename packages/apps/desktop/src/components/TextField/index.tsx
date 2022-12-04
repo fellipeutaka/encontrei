@@ -2,7 +2,7 @@ import { InputHTMLAttributes, forwardRef, HTMLAttributes } from "react";
 
 import { twMerge } from "tailwind-merge";
 
-interface IRootProps extends HTMLAttributes<HTMLDivElement> {}
+type IRootProps = {} & HTMLAttributes<HTMLDivElement>
 
 export function Root(props: IRootProps) {
   return (
@@ -18,7 +18,7 @@ export function Root(props: IRootProps) {
   );
 }
 
-interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {}
+type IInputProps = {} & InputHTMLAttributes<HTMLInputElement>
 
 export const Input = forwardRef<HTMLInputElement, IInputProps>((props, ref) => {
   return (

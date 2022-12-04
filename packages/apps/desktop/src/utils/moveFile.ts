@@ -2,7 +2,7 @@ import { supabase } from "@encontrei/lib/supabase";
 
 import { deleteFileByPath } from "./deleteFile";
 
-interface MoveFileParams {
+type MoveFileParams = {
   from: string;
   to: string;
 }

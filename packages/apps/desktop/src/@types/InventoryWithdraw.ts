@@ -1,14 +1,14 @@
 import { Inventory } from "./Inventory";
 import { User } from "./User";
 
-export interface SupabaseInventoryWithdraw {
+export type SupabaseInventoryWithdraw = {
   id: string;
   userId: string;
   inventoryId: string;
   requestedAt: string;
 }
 
-export interface InventoryWithdraw {
+export type InventoryWithdraw = {
   id: string;
   user: User;
   inventory: Inventory;

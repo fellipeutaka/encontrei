@@ -1,4 +1,4 @@
-export interface InventoryFoundSelect {
+export type InventoryFoundSelect = {
   id: string;
   name: string;
   description: string;
@@ -9,7 +9,7 @@ export interface InventoryFoundSelect {
   photoFilename: string;
 }
 
-export interface InventoryFoundInsert {
+export type InventoryFoundInsert = {
   id?: string;
   name: string;
   description: string;

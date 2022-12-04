@@ -17,7 +17,11 @@ export type InventoryWithdrawSent = {
 export type InventoryWithdrawItems = {
   requestedAt: string;
   onPress: () => void;
+<<<<<<< HEAD:packages/apps/mobile/src/@types/InventoryWithdraw.ts
 } & InventoryWithdrawSent;
+=======
+} & InventoryWithdrawSent
+>>>>>>> 83adbd0 (Linted all project):packages/apps/mobile/src/types/InventoryWithdraw.ts
 
 export type InventoryWithdrawAccepted = {
   id: string;
@@ -32,7 +36,11 @@ export type InventoryWithdrawAccepted = {
 
 export type InventoryWithdrawAcceptedItems = {
   onPress: () => void;
+<<<<<<< HEAD:packages/apps/mobile/src/@types/InventoryWithdraw.ts
 } & InventoryWithdrawAccepted;
+=======
+} & InventoryWithdrawAccepted
+>>>>>>> 83adbd0 (Linted all project):packages/apps/mobile/src/types/InventoryWithdraw.ts
 
 export type InventoryWithdrawRefused = {
   id: string;
@@ -47,4 +55,8 @@ export type InventoryWithdrawRefused = {
 
 export type InventoryWithdrawRefusedItems = {
   onPress: () => void;
+<<<<<<< HEAD:packages/apps/mobile/src/@types/InventoryWithdraw.ts
 } & InventoryWithdrawRefused;
+=======
+} & InventoryWithdrawRefused
+>>>>>>> 83adbd0 (Linted all project):packages/apps/mobile/src/types/InventoryWithdraw.ts

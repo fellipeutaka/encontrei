@@ -43,7 +43,22 @@ import {
   Text,
 } from "./styles";
 
+<<<<<<< HEAD
 type FormData = {
+=======
+const categories = [
+  "eletrônico",
+  "material escolar",
+  "roupa",
+  "outros",
+] as const;
+type Category = typeof categories[number];
+
+const locations = ["pátio", "quadra", "cantina", "sala 9", "lab 3"] as const;
+type Local = typeof locations[number];
+
+type Item = {
+>>>>>>> 83adbd0 (Linted all project)
   name: string;
   description: string;
   category: ICategory | null;

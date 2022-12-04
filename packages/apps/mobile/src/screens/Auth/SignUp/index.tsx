@@ -17,6 +17,11 @@ import { supabase } from "@encontrei/lib/supabase";
 import { vibrate } from "@encontrei/utils/vibrate";
 import { name, email, password } from "@encontrei/utils/zodSchemas";
 
+<<<<<<< HEAD
+=======
+import { Button, Container, Label, Title } from "./styles";
+
+>>>>>>> 83adbd0 (Linted all project)
 type FormData = {
   name: string;
   email: string;

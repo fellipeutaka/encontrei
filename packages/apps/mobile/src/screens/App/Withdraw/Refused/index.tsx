@@ -25,6 +25,7 @@ async function fetchItems() {
     .select()
     .match({
       userId,
+      isVisible: true,
     })
     .throwOnError();
   return data ?? [];
@@ -71,7 +72,7 @@ export function Refused() {
     try {
       await supabase
         .from("inventoryWithdrawRefused")
-        .delete()
+        .update({ isVisible: false })
         .match({ id })
         .throwOnError();
       Toast("Sucesso", "Removido do histórico com sucesso");

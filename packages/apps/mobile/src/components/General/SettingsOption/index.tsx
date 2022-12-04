@@ -2,6 +2,11 @@ import { TouchableOpacity, View, Text } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
 
+<<<<<<< HEAD
+=======
+import { Container, OptionInfo, OptionTitle, Touchable } from "./styles";
+
+>>>>>>> 83adbd0 (Linted all project)
 type SettingsOptionProps = {
   icon: JSX.Element;
   title: string;

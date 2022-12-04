@@ -1,4 +1,4 @@
-interface CreateImageFormDataParams {
+type CreateImageFormDataParams = {
   name: string;
   uri: string;
   imageExtension: string;

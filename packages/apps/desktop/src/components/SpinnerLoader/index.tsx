@@ -1,6 +1,6 @@
 import { BiLoaderAlt } from "react-icons/bi";
 
-interface SpinnerLoaderProps {
+type SpinnerLoaderProps = {
   size?: number;
 }
 

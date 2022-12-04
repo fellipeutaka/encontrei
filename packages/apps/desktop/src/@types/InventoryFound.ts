@@ -1,6 +1,6 @@
 import { User } from "./User";
 
-export interface SupabaseInventoryFound {
+export type SupabaseInventoryFound = {
   id: string;
   name: string;
   description: string;
@@ -11,6 +11,6 @@ export interface SupabaseInventoryFound {
   userId: string;
 }
 
-export interface InventoryFound extends SupabaseInventoryFound {
+export type InventoryFound = {
   user: User;
-}
+} & SupabaseInventoryFound

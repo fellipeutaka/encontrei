@@ -1,4 +1,4 @@
-export interface Inventory {
+export type Inventory = {
   id: string;
   name: string;
   description: string;
@@ -8,8 +8,8 @@ export interface Inventory {
   photoFilename: string;
 }
 
-export interface Item extends Inventory {
+export type Item = {
   date: string;
   time: string;
   photo: string;
-}
+} & Inventory

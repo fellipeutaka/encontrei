@@ -1,5 +1,5 @@
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-interface TooltipProps {
+type TooltipProps = {
   children: React.ReactNode;
   content: string;
 }

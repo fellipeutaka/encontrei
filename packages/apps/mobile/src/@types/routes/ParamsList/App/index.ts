@@ -1,7 +1,7 @@
 import type { ParamListBase } from "@react-navigation/native";
 
-export interface AppStackParamsList extends ParamListBase {
+export type AppStackParamsList = {
   Home: undefined;
   Withdraw: undefined;
   Settings: undefined;
-}
+} & ParamListBase

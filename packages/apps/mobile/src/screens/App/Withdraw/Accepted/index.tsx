@@ -24,6 +24,7 @@ async function fetchItems() {
     .select()
     .match({
       userId,
+      isVisible: true,
     })
     .throwOnError();
   return data ?? [];
@@ -39,7 +40,7 @@ export function Accepted() {
     try {
       await supabase
         .from("inventoryWithdrawAccepted")
-        .delete()
+        .update({ isVisible: false })
         .match({ id })
         .throwOnError();
       setItems((state) => state.filter((item) => item.id !== id));

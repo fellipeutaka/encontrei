@@ -8,7 +8,7 @@ import {
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { twMerge } from "tailwind-merge";
 
-interface SelectProps {
+type SelectProps = {
   rootProps: SelectPrimitive.SelectProps;
   triggerProps: SelectPrimitive.SelectTriggerProps;
   placeholder: string;
