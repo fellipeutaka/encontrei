@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 
 import {
@@ -7,35 +7,21 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Query } from "supabase-swr";
 
 import type { Inventory } from "@encontrei/@types/Inventory";
-import { Checkbox } from "@encontrei/components/Checkbox";
 import { ImagePreview } from "@encontrei/components/ImagePreview";
 import { supabase } from "@encontrei/lib/supabase";
 import { downloadCSV } from "@encontrei/utils/downloadCSV";
 import { getItems } from "@encontrei/utils/getItems";
 import { getPublicUrl } from "@encontrei/utils/getPublicUrl";
+import { tableSelectColumn } from "@encontrei/utils/tableSelectColumn";
+
+import { useFetch } from "./useFetch";
 
 const columnHelper = createColumnHelper<Inventory>();
 const columns = [
-  columnHelper.display({
-    id: "select",
-    enableSorting: false,
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllRowsSelected()}
-        onCheckedChange={(e) => table.toggleAllRowsSelected(Boolean(e))}
-        className="mx-auto"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={row.getToggleSelectedHandler()}
-        className="mx-auto"
-      />
-    ),
-  }),
+  tableSelectColumn<Inventory>(),
   columnHelper.accessor("name", {
     header: "Nome",
     cell: (info) => info.getValue(),
@@ -72,13 +58,13 @@ const columns = [
   }),
 ];
 
-type Items = Inventory[] | null;
-
 export function useInventory() {
-  const [items, setItems] = useState<Items>(null);
+  const inventoryQuery = getItems("inventory") as Query<Inventory>;
+  const { response, error, isLoading, mutate } =
+    useFetch<Inventory>(inventoryQuery);
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
-    data: items ?? [],
+    data: response?.data ?? [],
     columns,
     state: {
       rowSelection,
@@ -88,33 +74,6 @@ export function useInventory() {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
-
-  useEffect(() => {
-    getItems("inventory")
-      .then((data) => setItems(data as Items))
-      .catch((err) => {
-        console.error(err);
-        toast.error("Ocorreu um erro ao buscar os itens");
-      });
-  }, []);
-
-  useEffect(() => {
-    const subscription = supabase
-      .from("inventory")
-      .on("INSERT", async (payload) => {
-        setItems((state) => (state ? [...state, payload.new] : state));
-      })
-      .on("DELETE", async (payload) => {
-        setItems((state) =>
-          state ? state.filter((item) => item.id !== payload.old.id) : state
-        );
-      })
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
 
   const handleDeleteItem = useCallback(async () => {
     const selectedRows = table
@@ -126,14 +85,14 @@ export function useInventory() {
         selectedRows.length > 1
           ? "Você realmente deseja excluir esses itens?"
           : "Você realmente deseja excluir esse item?";
-      const response = await window.Main.showMessageBox({
+      const messageBoxResponse = await window.Main.showMessageBox({
         options: {
           buttons: ["Não", "Sim"],
           title: "Encontrei",
           message: messageBoxMessage,
         },
       });
-      if (response === 1) {
+      if (messageBoxResponse === 1) {
         const deleteAllWithdrawRequests = supabase
           .from("inventoryWithdraw")
           .delete()
@@ -149,12 +108,10 @@ export function useInventory() {
         const deleteAllItemsPhotoInInventory = supabase.storage
           .from("item-photo")
           .remove(selectedRows.map((row) => row.photoFilename));
-
-        await Promise.all([
-          deleteAllWithdrawRequests,
-          deleteAllItemsInInventory,
-          deleteAllItemsPhotoInInventory,
-        ]);
+        await deleteAllWithdrawRequests;
+        await deleteAllItemsInInventory;
+        await deleteAllItemsPhotoInInventory;
+        await mutate(response);
         setRowSelection({});
         toast.success("Item excluído com sucesso");
       }
@@ -165,9 +122,9 @@ export function useInventory() {
   }, []);
 
   const handleDownload = useCallback(() => {
-    if (items) {
+    if (response) {
       downloadCSV(
-        items.map((item) => ({
+        response.data.map((item) => ({
           Nome: item.name,
           Descrição: item.description,
           Categoria: item.category,
@@ -181,11 +138,13 @@ export function useInventory() {
         "inventario"
       );
     }
-  }, [items]);
+  }, [response]);
 
   return {
-    items,
-    setItems,
+    response,
+    error,
+    isLoading,
+    mutate,
     table,
     handleDeleteItem,
     handleDownload,

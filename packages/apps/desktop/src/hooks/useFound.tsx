@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 
 import {
@@ -7,35 +7,21 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Query } from "supabase-swr";
 
 import type { InventoryFound } from "@encontrei/@types/InventoryFound";
-import { Checkbox } from "@encontrei/components/Checkbox";
 import { ImagePreview } from "@encontrei/components/ImagePreview";
 import { supabase } from "@encontrei/lib/supabase";
 import { downloadCSV } from "@encontrei/utils/downloadCSV";
 import { getItems } from "@encontrei/utils/getItems";
 import { getPublicUrl } from "@encontrei/utils/getPublicUrl";
+import { tableSelectColumn } from "@encontrei/utils/tableSelectColumn";
+
+import { useFetch } from "./useFetch";
 
 const columnHelper = createColumnHelper<InventoryFound>();
 const columns = [
-  columnHelper.display({
-    id: "select",
-    enableSorting: false,
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllRowsSelected()}
-        onCheckedChange={(e) => table.toggleAllRowsSelected(Boolean(e))}
-        className="mx-auto"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={row.getToggleSelectedHandler()}
-        className="mx-auto"
-      />
-    ),
-  }),
+  tableSelectColumn<InventoryFound>(),
   columnHelper.accessor("name", {
     header: "Nome",
     cell: (info) => info.getValue(),
@@ -80,13 +66,13 @@ const columns = [
   }),
 ];
 
-type Items = InventoryFound[] | null;
-
 export function useFound() {
-  const [items, setItems] = useState<Items>(null);
+  const inventoryQuery = getItems("inventoryFound") as Query<InventoryFound>;
+  const { response, error, isLoading, mutate } =
+    useFetch<InventoryFound>(inventoryQuery);
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
-    data: items ?? [],
+    data: response?.data ?? [],
     columns,
     state: {
       rowSelection,
@@ -96,50 +82,6 @@ export function useFound() {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
-
-  useEffect(() => {
-    getItems("inventoryFound")
-      .then((data) => setItems(data as Items))
-      .catch((err) => {
-        console.error(err);
-        toast.error("Ocorreu um erro ao buscar os itens");
-      });
-  }, []);
-
-  useEffect(() => {
-    const subscription = supabase
-      .from<InventoryFound>("inventoryFound")
-      .on("INSERT", async (payload) => {
-        try {
-          const { data } = await supabase
-            .from("users")
-            .select("email, raw_user_meta_data->name")
-            .match({ id: payload.new.userId })
-            .throwOnError();
-          if (data) {
-            setItems((state) => {
-              const newItem = {
-                ...payload.new,
-                user: data[0],
-              };
-              return state ? [...state, newItem] : state;
-            });
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      })
-      .on("DELETE", (payload) => {
-        setItems((state) =>
-          state ? state.filter((item) => item.id !== payload.old.id) : state
-        );
-      })
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
 
   const handleAcceptItem = useCallback(async () => {
     const selectedRows = table
@@ -161,14 +103,14 @@ export function useFound() {
         selectedRows.length > 1
           ? "Você realmente deseja aceitar esses itens?"
           : "Você realmente deseja aceitar esse item?";
-      const response = await window.Main.showMessageBox({
+      const messageBoxResponse = await window.Main.showMessageBox({
         options: {
           buttons: ["Não", "Sim"],
           title: "Encontrei",
           message: messageBoxMessage,
         },
       });
-      if (response === 1) {
+      if (messageBoxResponse === 1) {
         const addAcceptedItemsToInventory = supabase
           .from("inventory")
           .insert(inventoryWithdrawAcceptedItems)
@@ -179,11 +121,9 @@ export function useFound() {
           .delete()
           .in("id", selectedRowsIds)
           .throwOnError();
-
-        await Promise.all([
-          addAcceptedItemsToInventory,
-          removeAllItemsFromFound,
-        ]);
+        await addAcceptedItemsToInventory;
+        await removeAllItemsFromFound;
+        await mutate(response);
         setRowSelection({});
         toast.success("Solicitação aceita com sucesso");
       }
@@ -213,14 +153,14 @@ export function useFound() {
         selectedRows.length > 1
           ? "Você realmente deseja recusar esses itens?"
           : "Você realmente deseja recusar esse item?";
-      const response = await window.Main.showMessageBox({
+      const messageBoxResponse = await window.Main.showMessageBox({
         options: {
           buttons: ["Não", "Sim"],
           title: "Encontrei",
           message: messageBoxMessage,
         },
       });
-      if (response === 1) {
+      if (messageBoxResponse === 1) {
         const removeAllItemsFromFound = supabase
           .from("inventoryFound")
           .delete()
@@ -232,11 +172,9 @@ export function useFound() {
           .remove(
             inventoryWithdrawAcceptedItems.map((item) => item.photoFilename)
           );
-
-        await Promise.all([
-          removeAllItemsFromFound,
-          removeAllItemsPhotoFromFound,
-        ]);
+        await removeAllItemsFromFound;
+        await removeAllItemsPhotoFromFound;
+        await mutate(response);
 
         toast.success("Solicitação recusada com sucesso");
       }
@@ -247,9 +185,9 @@ export function useFound() {
   }, []);
 
   const handleDownload = useCallback(() => {
-    if (items) {
+    if (response) {
       downloadCSV(
-        items.map(({ user, ...inventory }) => ({
+        response.data.map(({ user, ...inventory }) => ({
           Nome: inventory.name,
           Descrição: inventory.description,
           Categoria: inventory.category,
@@ -265,11 +203,13 @@ export function useFound() {
         "encontrados"
       );
     }
-  }, [items]);
+  }, [response]);
 
   return {
-    items,
-    setItems,
+    response,
+    error,
+    isLoading,
+    mutate,
     table,
     handleAcceptItem,
     handleRefuseItem,

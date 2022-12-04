@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 
 import {
@@ -7,37 +7,21 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Query } from "supabase-swr";
 
-import type { Inventory } from "@encontrei/@types/Inventory";
 import type { InventoryWithdraw } from "@encontrei/@types/InventoryWithdraw";
-import type { User } from "@encontrei/@types/User";
-import { Checkbox } from "@encontrei/components/Checkbox";
 import { ImagePreview } from "@encontrei/components/ImagePreview";
 import { supabase } from "@encontrei/lib/supabase";
 import { downloadCSV } from "@encontrei/utils/downloadCSV";
 import { getItems } from "@encontrei/utils/getItems";
 import { getPublicUrl } from "@encontrei/utils/getPublicUrl";
+import { tableSelectColumn } from "@encontrei/utils/tableSelectColumn";
+
+import { useFetch } from "./useFetch";
 
 const columnHelper = createColumnHelper<InventoryWithdraw>();
 const columns = [
-  columnHelper.display({
-    id: "select",
-    enableSorting: false,
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllRowsSelected()}
-        onCheckedChange={(e) => table.toggleAllRowsSelected(Boolean(e))}
-        className="mx-auto"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={row.getToggleSelectedHandler()}
-        className="mx-auto"
-      />
-    ),
-  }),
+  tableSelectColumn<InventoryWithdraw>(),
   columnHelper.accessor("inventory.name", {
     header: "Nome",
     cell: (info) => info.getValue(),
@@ -82,13 +66,16 @@ const columns = [
   }),
 ];
 
-type Items = InventoryWithdraw[] | null;
-
 export function useWithdraw() {
-  const [items, setItems] = useState<Items>(null);
+  const inventoryWithdrawQuery = getItems(
+    "inventoryWithdraw"
+  ) as Query<InventoryWithdraw>;
+  const { response, error, isLoading, mutate } = useFetch<InventoryWithdraw>(
+    inventoryWithdrawQuery
+  );
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
-    data: items ?? [],
+    data: response?.data ?? [],
     columns,
     state: {
       rowSelection,
@@ -98,53 +85,6 @@ export function useWithdraw() {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
-
-  useEffect(() => {
-    getItems("inventoryWithdraw")
-      .then((data) => setItems(data as Items))
-      .catch((err) => {
-        console.error(err);
-        toast.error("Ocorreu um erro ao buscar os itens");
-      });
-  }, []);
-
-  useEffect(() => {
-    const subscription = supabase
-      .from("inventory")
-      .on("INSERT", async (payload) => {
-        const userResponse = await supabase
-          .from<User>("users")
-          .select("id, email, raw_user_meta_data->name")
-          .match({ id: payload.new.userId });
-        const inventoryResponse = await supabase
-          .from<Inventory>("inventory")
-          .select()
-          .match({ id: payload.new.inventoryId });
-
-        if (userResponse.error || inventoryResponse.error) {
-          return console.error(userResponse.error, inventoryResponse.error);
-        }
-
-        const newItem = {
-          id: payload.new.id,
-          inventory: inventoryResponse.data[0],
-          user: userResponse.data[0],
-          requestedAt: payload.new.requestedAt,
-        };
-
-        setItems((state) => (state ? [...state, newItem] : state));
-      })
-      .on("DELETE", async (payload) => {
-        setItems((state) =>
-          state ? state.filter((item) => item.id !== payload.old.id) : state
-        );
-      })
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
 
   const handleAcceptItem = useCallback(async () => {
     const selectedRows = table
@@ -169,14 +109,14 @@ export function useWithdraw() {
         selectedRows.length > 1
           ? "Você realmente deseja aceitar esses itens?"
           : "Você realmente deseja aceitar esse item?";
-      const response = await window.Main.showMessageBox({
+      const messageBoxResponse = await window.Main.showMessageBox({
         options: {
           buttons: ["Não", "Sim"],
           title: "Encontrei",
           message: messageBoxMessage,
         },
       });
-      if (response === 1) {
+      if (messageBoxResponse === 1) {
         const addAcceptedItemsToWithdrawAccepted = supabase
           .from("inventoryWithdrawAccepted")
           .insert(inventoryWithdrawAcceptedItems)
@@ -194,11 +134,10 @@ export function useWithdraw() {
           .in("id", selectedRowsInventoryIds)
           .throwOnError();
 
-        await Promise.all([
-          addAcceptedItemsToWithdrawAccepted,
-          removeAllItemsFromWithdraw,
-          removeAllItemsFromInventory,
-        ]);
+        await addAcceptedItemsToWithdrawAccepted;
+        await removeAllItemsFromWithdraw;
+        await removeAllItemsFromInventory;
+        await mutate(response);
         setRowSelection({});
         toast.success("Solicitação aceita com sucesso");
       }
@@ -231,16 +170,16 @@ export function useWithdraw() {
         selectedRows.length > 1
           ? "Você realmente deseja recusar esses itens?"
           : "Você realmente deseja recusar esse item?";
-      const response = await window.Main.showMessageBox({
+      const messageBoxResponse = await window.Main.showMessageBox({
         options: {
           buttons: ["Não", "Sim"],
           title: "Encontrei",
           message: messageBoxMessage,
         },
       });
-      if (response === 1) {
+      if (messageBoxResponse === 1) {
         const addRefusedItemsToWithdrawRefused = supabase
-          .from("inventoryWithdrawAccepted")
+          .from("inventoryWithdrawRefused")
           .insert(inventoryWithdrawAcceptedItems)
           .throwOnError();
 
@@ -249,12 +188,9 @@ export function useWithdraw() {
           .delete()
           .in("inventoryId", selectedRowsInventoryIds)
           .throwOnError();
-
-        await Promise.all([
-          addRefusedItemsToWithdrawRefused,
-          removeAllItemsFromWithdraw,
-        ]);
-
+        await addRefusedItemsToWithdrawRefused;
+        await removeAllItemsFromWithdraw;
+        await mutate(response);
         toast.success("Solicitação recusada com sucesso");
       }
     } catch (err) {
@@ -264,9 +200,9 @@ export function useWithdraw() {
   }, []);
 
   const handleDownload = useCallback(() => {
-    if (items) {
+    if (response) {
       downloadCSV(
-        items.map(({ inventory, requestedAt, user }) => ({
+        response.data.map(({ inventory, requestedAt, user }) => ({
           Nome: inventory.name,
           Descrição: inventory.description,
           Categoria: inventory.category,
@@ -282,11 +218,13 @@ export function useWithdraw() {
         "solicitados"
       );
     }
-  }, [items]);
+  }, [response]);
 
   return {
-    items,
-    setItems,
+    response,
+    error,
+    isLoading,
+    mutate,
     table,
     handleAcceptItem,
     handleRefuseItem,

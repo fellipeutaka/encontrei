@@ -1,4 +1,4 @@
-export interface InventoryWithdrawRefused {
+export type InventoryWithdrawRefused = {
   id: string;
   name: string;
   description: string;
@@ -7,4 +7,5 @@ export interface InventoryWithdrawRefused {
   refusedAt: string;
   photoFilename: string;
   userId: string;
-}
+  isVisible: boolean;
+};

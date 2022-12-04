@@ -9,8 +9,10 @@ import { useWithdraw } from "@encontrei/hooks/useWithdraw";
 
 export function Withdraw() {
   const {
-    items,
-    setItems,
+    response,
+    mutate,
+    isLoading,
+    error,
     table,
     handleAcceptItem,
     handleRefuseItem,
@@ -23,7 +25,7 @@ export function Withdraw() {
         <h1 className="text-6xl font-semibold">Solicitados</h1>
         <div className="flex items-center gap-2">
           <DownloadButton
-            disabled={!items ?? items?.length === 0}
+            disabled={!response || response?.data.length === 0}
             onClick={handleDownload}
           />
           <AcceptButton
@@ -36,9 +38,9 @@ export function Withdraw() {
           />
         </div>
       </header>
-      {!items ? (
+      {isLoading ? (
         <SpinnerLoader size={48} />
-      ) : items.length === 0 ? (
+      ) : response?.data.length === 0 ? (
         <motion.div
           className="min-w-[64rem] w-full max-w-7xl animate-fade"
           animate={{ y: 64 }}
@@ -48,7 +50,7 @@ export function Withdraw() {
           </span>
         </motion.div>
       ) : (
-        <Table items={items} setItems={setItems} table={table} />
+        <Table items={response?.data ?? []} setItems={mutate} table={table} />
       )}
     </main>
   );

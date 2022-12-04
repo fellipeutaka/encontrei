@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as Dialog from "@radix-ui/react-dialog";
 import { clsx } from "clsx";
 import { motion } from "framer-motion";
+import { Query } from "supabase-swr";
+import { useSWRConfig } from "swr";
 import { z } from "zod";
 
 import type { Inventory } from "@encontrei/@types/Inventory";
@@ -16,6 +18,7 @@ import { Select } from "@encontrei/components/Select";
 import * as TextField from "@encontrei/components/TextField";
 import { supabase } from "@encontrei/lib/supabase";
 import { categories } from "@encontrei/utils/category";
+import { getItems } from "@encontrei/utils/getItems";
 import { getUnixTimestampInSeconds } from "@encontrei/utils/getUnixTimestampInSeconds";
 import { handleScape } from "@encontrei/utils/handleScape";
 import { locals } from "@encontrei/utils/local";
@@ -60,6 +63,8 @@ const itemSchema = z.object({
 type FormData = z.output<typeof itemSchema>;
 
 export function CreateItemDialog() {
+  const inventoryQuery = getItems("inventory") as Query<Inventory>;
+  const { mutate } = useSWRConfig();
   const {
     handleSubmit,
     control,
@@ -116,6 +121,7 @@ export function CreateItemDialog() {
         autoClose: 4000,
         draggable: true,
       });
+      await mutate(inventoryQuery);
       reset();
       handleScape();
     } catch (err) {

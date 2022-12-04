@@ -10,10 +10,10 @@ import { Button } from "@encontrei/components/Button";
 import * as TextField from "@encontrei/components/TextField";
 import { supabase } from "@encontrei/lib/supabase";
 
-interface IInputs {
+type IInputs = {
   email: string;
   password: string;
-}
+};
 
 export default function SignIn() {
   const {

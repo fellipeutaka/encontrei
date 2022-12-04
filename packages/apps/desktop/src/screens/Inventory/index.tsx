@@ -8,8 +8,15 @@ import { Table } from "@encontrei/components/Table";
 import { useInventory } from "@encontrei/hooks/useInventory";
 
 export function Inventory() {
-  const { items, setItems, table, handleDeleteItem, handleDownload } =
-    useInventory();
+  const {
+    response,
+    mutate,
+    isLoading,
+    error,
+    table,
+    handleDeleteItem,
+    handleDownload,
+  } = useInventory();
 
   return (
     <main className="flex flex-col justify-center items-center h-screen">
@@ -17,7 +24,7 @@ export function Inventory() {
         <h1 className="text-6xl font-semibold">Inventário</h1>
         <div className="flex items-center gap-2">
           <DownloadButton
-            disabled={!items ?? items?.length === 0}
+            disabled={!response || response?.data.length === 0}
             onClick={handleDownload}
           />
           <CreateItemDialog />
@@ -27,9 +34,9 @@ export function Inventory() {
           />
         </div>
       </header>
-      {!items ? (
+      {isLoading ? (
         <SpinnerLoader size={48} />
-      ) : items.length === 0 ? (
+      ) : response?.data.length === 0 ? (
         <motion.div
           className="min-w-[64rem] w-full max-w-7xl animate-fade"
           animate={{ y: 64 }}
@@ -39,7 +46,7 @@ export function Inventory() {
           </span>
         </motion.div>
       ) : (
-        <Table items={items} setItems={setItems} table={table} />
+        <Table items={response?.data ?? []} setItems={mutate} table={table} />
       )}
     </main>
   );

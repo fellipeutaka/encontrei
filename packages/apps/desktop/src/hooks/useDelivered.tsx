@@ -7,12 +7,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Query } from "supabase-swr";
 
 import type { InventoryWithdrawAccepted } from "@encontrei/@types/InventoryWithdrawAccepted";
 import { ImagePreview } from "@encontrei/components/ImagePreview";
 import { downloadCSV } from "@encontrei/utils/downloadCSV";
 import { getItems } from "@encontrei/utils/getItems";
 import { getPublicUrl } from "@encontrei/utils/getPublicUrl";
+
+import { useFetch } from "./useFetch";
 
 const columnHelper = createColumnHelper<InventoryWithdrawAccepted>();
 const columns = [
@@ -60,13 +63,15 @@ const columns = [
   }),
 ];
 
-type Items = InventoryWithdrawAccepted[] | null;
-
 export function useDelivered() {
-  const [items, setItems] = useState<Items>(null);
+  const inventoryQuery = getItems(
+    "inventoryWithdrawAccepted"
+  ) as Query<InventoryWithdrawAccepted>;
+  const { response, error, isLoading, mutate } =
+    useFetch<InventoryWithdrawAccepted>(inventoryQuery);
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
-    data: items ?? [],
+    data: response?.data ?? [],
     columns,
     state: {
       rowSelection,
@@ -77,19 +82,10 @@ export function useDelivered() {
     getSortedRowModel: getSortedRowModel(),
   });
 
-  useEffect(() => {
-    getItems("inventoryWithdrawAccepted")
-      .then((data) => setItems(data as Items))
-      .catch((err) => {
-        console.error(err);
-        toast.error("Ocorreu um erro ao buscar os itens");
-      });
-  }, []);
-
   const handleDownload = useCallback(() => {
-    if (items) {
+    if (response) {
       downloadCSV(
-        items.map(({ user, ...inventory }) => ({
+        response.data.map(({ user, ...inventory }) => ({
           Nome: inventory.name,
           Descrição: inventory.description,
           Categoria: inventory.category,
@@ -105,11 +101,13 @@ export function useDelivered() {
         "entregues"
       );
     }
-  }, [items]);
+  }, [response]);
 
   return {
-    items,
-    setItems,
+    response,
+    error,
+    isLoading,
+    mutate,
     table,
     handleDownload,
   };

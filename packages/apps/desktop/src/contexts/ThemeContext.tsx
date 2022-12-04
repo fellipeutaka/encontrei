@@ -1,15 +1,15 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 
-interface IThemeContext {
+type IThemeContext = {
   theme: string;
   toggleTheme: () => void;
-}
+};
 
 export const ThemeContext = createContext({} as IThemeContext);
 
-interface ThemeProviderProps {
+type ThemeProviderProps = {
   children: ReactNode;
-}
+};
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState("dark");

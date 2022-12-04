@@ -4,13 +4,13 @@ import { IoExitOutline, IoNotificationsOutline } from "react-icons/io5";
 import { RiFileList3Line } from "react-icons/ri";
 import { Link, useLocation } from "react-router-dom";
 
+import type { SidebarLink } from "@encontrei/@types/SidebarLink";
 import { useTheme } from "@encontrei/hooks/useTheme";
+import { supabase } from "@encontrei/lib/supabase";
 
-import type { SidebarLink } from "../../@types/SidebarLink";
-import { supabase } from "../../lib/supabase";
 import { Badge } from "../Badge";
-import Logo from "../Icons/Logo";
-import ThemeIcon from "../Icons/Theme";
+import { Logo } from "../Icons/Logo";
+import { ThemeIcon } from "../Icons/Theme";
 import { Tooltip } from "../Tooltip";
 
 const paths = {
@@ -28,6 +28,15 @@ type INotifications = {
     amount: number;
   };
 };
+
+function createLink(pathname: string, { path, icon, text }: SidebarLink) {
+  return {
+    path,
+    active: pathname === path,
+    icon,
+    text,
+  };
+}
 
 export function Sidebar() {
   const [notifications, setNotifications] = useState<INotifications>({
@@ -51,36 +60,24 @@ export function Sidebar() {
   const { pathname } = useLocation();
   const { toggleTheme } = useTheme();
 
-  const createLink = useCallback(
-    ({ path, icon, text }: SidebarLink) => {
-      return {
-        path,
-        active: pathname === path,
-        icon,
-        text,
-      };
-    },
-    [pathname]
-  );
-
   const sidebarLinks = useMemo(() => {
     return [
-      createLink({
+      createLink(pathname, {
         path: paths.inventory,
         icon: <BsBoxSeam aria-label="Inventory icon" size={18} />,
         text: "Inventário",
       }),
-      createLink({
+      createLink(pathname, {
         path: paths.withdraw,
         icon: <RiFileList3Line aria-label="Withdraw icon" size={18} />,
         text: "Solicitados",
       }),
-      createLink({
+      createLink(pathname, {
         path: paths.found,
         icon: <IoNotificationsOutline aria-label="Found icon" size={18} />,
         text: "Encontrados",
       }),
-      createLink({
+      createLink(pathname, {
         path: paths.delivered,
         icon: <BsTruck aria-label="Delivered icon" size={18} />,
         text: "Entregues",

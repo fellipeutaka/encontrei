@@ -9,7 +9,7 @@ import { Arrow } from "@encontrei/components/Icons/Arrow";
 type TableProps<T> = {
   table: ITable<T>;
   items: T[];
-  setItems: React.Dispatch<React.SetStateAction<T[] | null>>;
+  setItems: any;
 };
 
 const BsArrowDown = motion(Arrow);
@@ -17,12 +17,12 @@ const BsArrowDown = motion(Arrow);
 export function Table<T>({ table, items, setItems }: TableProps<T>) {
   return (
     <motion.div
-      className="min-w-[64rem] w-full max-w-7xl overflow-y-scroll overflow-x-hidden animate-fade"
+      className="min-w-[8rem] w-full max-w-7xl overflow-y-scroll animate-fade"
       animate={{ y: 64 }}
     >
       <Reorder.Group
         as="table"
-        className="rounded-xl min-w-[64rem] w-full max-w-7xl border border-transparent overflow-hidden"
+        className="rounded-xl min-w-[8rem] w-full max-w-7xl border border-transparent overflow-hidden"
         values={items}
         onReorder={setItems}
       >
@@ -33,13 +33,7 @@ export function Table<T>({ table, items, setItems }: TableProps<T>) {
                 <th
                   key={header.id}
                   colSpan={header.colSpan}
-                  className={clsx(
-                    "border border-zinc-600 dark:bg-zinc-700 bg-zinc-200 transition duration-300 select-none",
-                    {
-                      "flex justify-center items-center py-3 border-t-transparent border-r-transparent border-l-transparent":
-                        header.column.id === "select",
-                    }
-                  )}
+                  className="border border-zinc-600 dark:bg-zinc-700 bg-zinc-200 transition duration-300 select-none"
                 >
                   {header.column.getCanSort() ? (
                     <button
@@ -96,11 +90,7 @@ export function Table<T>({ table, items, setItems }: TableProps<T>) {
                   className={clsx(
                     "border border-zinc-600 dark:bg-zinc-800 bg-zinc-400 transition duration-300",
                     {
-                      "min-h-[4.5rem] w-16": cell.column.id === "photoFilename",
-                    },
-                    {
-                      "min-h-[4.5rem] border-none flex justify-center items-center":
-                        cell.column.id === "select",
+                      "py-2 w-16": cell.column.id === "photoFilename",
                     },
                     {
                       "p-2 min-w-[64px] max-w-md":

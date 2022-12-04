@@ -1,6 +1,6 @@
 import { User } from "./User";
 
-export interface InventoryWithdrawAccepted {
+export type InventoryWithdrawAccepted = {
   id: string;
   name: string;
   description: string;
@@ -10,4 +10,5 @@ export interface InventoryWithdrawAccepted {
   photoFilename: string;
   userId: string;
   user: User;
-}
+  isVisible: boolean;
+};

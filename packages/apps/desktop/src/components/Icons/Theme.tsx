@@ -37,11 +37,11 @@ const defaultProperties = {
   springConfig: { mass: 4, tension: 250, friction: 35 },
 };
 
-export interface Props extends HTMLAttributes<SVGElement> {
+export type Props = {
   animationProperties?: typeof defaultProperties;
-}
+} & HTMLAttributes<SVGElement>;
 
-export default function ThemeIcon({
+export function ThemeIcon({
   animationProperties = defaultProperties,
   ...rest
 }) {
