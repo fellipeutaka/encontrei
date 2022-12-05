@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import { DownloadButton } from "@encontrei/components/DownloadButton";
 import { SpinnerLoader } from "@encontrei/components/SpinnerLoader";
 import { Table } from "@encontrei/components/Table";
-import { useDelivered } from "@encontrei/hooks/useDelivered";
+
+import { useDelivered } from "./useDelivered";
 
 export function Delivered() {
   const { response, mutate, isLoading, error, table, handleDownload } =

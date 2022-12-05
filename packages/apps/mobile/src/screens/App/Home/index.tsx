@@ -1,21 +1,26 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FlatList, Pressable, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { MotiView, useAnimationState } from "moti";
-import { Inventory } from "src/@types/Inventory";
-import { HomeStackNavigationProps } from "src/@types/routes/NavigationProps/App/Home";
+import { Query } from "supabase-swr";
 
-import { Item } from "@encontrei/components/Layout/Item";
+import { HomeStackNavigationProps } from "@encontrei/@types/routes/NavigationProps/App/Home";
+import { useFetch } from "@encontrei/hooks/useFetch";
+import { useToast } from "@encontrei/hooks/useToast";
+import { WithdrawItem } from "@encontrei/screens/App/Withdraw/components/WithdrawItem";
 import { Loading } from "@encontrei/screens/Loading";
-import { getImageUrl } from "@encontrei/utils/getImageUrl";
+import { Inventory } from "@encontrei/shared-constants";
 import { getItems } from "@encontrei/utils/getItems";
 
 export function Home() {
-  const [items, setItems] = useState<Inventory[] | null>(null);
+  const inventoryQuery = getItems("inventory") as Query<Inventory>;
+  const { response, error, isLoading, mutate } =
+    useFetch<Inventory>(inventoryQuery);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { navigate } = useNavigation<HomeStackNavigationProps>();
+  const toast = useToast();
   const buttonAnimatedState = useAnimationState({
     pressIn: {
       opacity: 0.7,
@@ -27,10 +32,6 @@ export function Home() {
     },
   });
 
-  useEffect(() => {
-    getItems<Inventory>("inventory").then(setItems).catch(console.error);
-  }, []);
-
   function handleAnimateButton(state: "pressIn" | "pressOut") {
     buttonAnimatedState.transitionTo(state);
   }
@@ -38,8 +39,7 @@ export function Home() {
   async function handleRefreshList() {
     setIsRefreshing(true);
     try {
-      const items = await getItems<Inventory>("inventory");
-      setItems(items);
+      await mutate();
     } catch (err) {
       console.error(err);
     } finally {
@@ -47,29 +47,31 @@ export function Home() {
     }
   }
 
-  if (!items) {
+  if (isLoading) {
     return <Loading />;
+  }
+
+  if (error) {
+    toast({
+      message: error.message,
+      type: "error",
+    });
   }
 
   return (
     <View className="flex-1 justify-center items-center p-6 bg-zinc-50 dark:bg-zinc-900">
       <FlatList
-        data={items}
+        data={response?.data}
         onRefresh={handleRefreshList}
         refreshing={isRefreshing}
         ListEmptyComponent={null}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Item
+          <WithdrawItem
             title={item.name}
             location={item.local}
-            photoUrl={getImageUrl("inventory/" + item.photoFilename)}
-            onPress={() =>
-              navigate("Details", {
-                ...item,
-                photoUrl: getImageUrl(item.photoFilename),
-              })
-            }
+            photoUrl={item.photoFilename}
+            onPress={() => navigate("Details", item)}
           />
         )}
         showsVerticalScrollIndicator={false}

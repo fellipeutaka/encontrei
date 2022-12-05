@@ -13,26 +13,18 @@ import {
 } from "@encontrei/components/Controllers/TextField";
 import { KeyboardAvoidingView } from "@encontrei/components/General/KeyboardAvoidingView";
 import { Label } from "@encontrei/components/General/Label";
+import { useToast } from "@encontrei/hooks/useToast";
 import { supabase } from "@encontrei/lib/supabase";
 import { vibrate } from "@encontrei/utils/vibrate";
 import { name, email, password } from "@encontrei/utils/zodSchemas";
-
-<<<<<<< HEAD
-=======
-import { Button, Container, Label, Title } from "./styles";
-
->>>>>>> 83adbd0 (Linted all project)
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-};
 
 const signUpSchema = z.object({
   name,
   email,
   password,
 });
+
+type FormData = z.output<typeof signUpSchema>;
 
 export function SignUp() {
   const {
@@ -42,24 +34,31 @@ export function SignUp() {
   } = useForm<FormData>({
     resolver: zodResolver(signUpSchema),
   });
-  const navigation = useNavigation();
+  const { goBack } = useNavigation();
+  const toast = useToast();
 
   async function signUp({ name, email, password }: FormData) {
-    try {
-      await supabase.auth.signUp(
-        {
-          email,
-          password,
+    const { error } = await supabase.auth.signUp(
+      {
+        email,
+        password,
+      },
+      {
+        data: {
+          name: name.trim(),
         },
-        {
-          data: {
-            name: name.trim(),
-          },
-        }
-      );
-    } catch (err) {
-      console.error(err);
+      }
+    );
+    if (error) {
+      return toast({
+        type: "error",
+        message: error.message,
+      });
     }
+    toast({
+      type: "success",
+      message: "Conta criada com sucesso! Por favor, confirme seu e-mail",
+    });
   }
 
   return (
@@ -140,7 +139,7 @@ export function SignUp() {
         >
           <Button.Text>Entrar</Button.Text>
         </Button.Root>
-        <TouchableOpacity className="mt-4" onPress={navigation.goBack}>
+        <TouchableOpacity className="mt-4" onPress={goBack}>
           <Text className="font-medium text-zinc-900 dark:text-zinc-50">
             Já tem uma conta? Entre agora
           </Text>

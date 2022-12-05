@@ -1,4 +1,4 @@
-import { tuple } from "./tuple";
+import { tuple } from "@encontrei/shared-utils";
 
 export const categories = tuple(
   "Eletrônico",

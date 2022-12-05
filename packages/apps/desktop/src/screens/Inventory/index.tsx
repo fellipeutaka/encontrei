@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
 
-import { CreateItemDialog } from "@encontrei/components/CreateItemDialog";
 import { DeleteButton } from "@encontrei/components/DeleteButton";
 import { DownloadButton } from "@encontrei/components/DownloadButton";
 import { SpinnerLoader } from "@encontrei/components/SpinnerLoader";
 import { Table } from "@encontrei/components/Table";
-import { useInventory } from "@encontrei/hooks/useInventory";
+
+import { CreateItemDialog } from "./components/CreateItemDialog";
+import { useInventory } from "./useInventory";
 
 export function Inventory() {
   const {

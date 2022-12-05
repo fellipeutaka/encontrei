@@ -13,13 +13,11 @@ import { supabase } from "@encontrei/lib/supabase";
 import { vibrate } from "@encontrei/utils/vibrate";
 import { email } from "@encontrei/utils/zodSchemas";
 
-type FormData = {
-  email: string;
-};
-
 const forgetSchema = z.object({
   email,
 });
+
+type FormData = z.output<typeof forgetSchema>;
 
 export function Forget() {
   const {

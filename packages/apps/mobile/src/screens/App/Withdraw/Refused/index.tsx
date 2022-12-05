@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
 
 import { Feather } from "@expo/vector-icons";
-import { useTheme } from "styled-components/native";
-
-import Spinner from "@encontrei/components/General/Spinner";
-import { Center } from "@encontrei/components/Layout/Center";
-import Item from "@encontrei/components/Layout/Item";
-import { supabase } from "@encontrei/lib/supabase";
-import { Container, ItemsContainer } from "@encontrei/screens/App/Home/styles";
 import type {
   InventoryWithdrawRefused,
   InventoryWithdrawRefusedItems,
 } from "src/@types/InventoryWithdraw";
-import { capitalizeFirstLetter } from "@encontrei/utils/capitalizeFirstLetter";
-import { getImageUrl } from "@encontrei/utils/getImageUrl";
-import Toast from "@encontrei/utils/toast";
+import { useTheme } from "styled-components/native";
 
+import Spinner from "@encontrei/components/General/Spinner";
+import { Center } from "@encontrei/components/Layout/Center";
+import { useToast } from "@encontrei/hooks/useToast";
+import { supabase } from "@encontrei/lib/supabase";
+import { Container, ItemsContainer } from "@encontrei/screens/App/Home/styles";
+import { getPublicUrl } from "@encontrei/shared-utils";
+import { capitalizeFirstLetter } from "@encontrei/utils/capitalizeFirstLetter";
+
+import { WithdrawItem } from "../components/WithdrawItem";
 import { ItemList } from "./styles";
 
 async function fetchItems() {
@@ -36,6 +36,7 @@ export function Refused() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [items, setItems] = useState<InventoryWithdrawRefusedItems[]>([]);
+  const toast = useToast();
 
   async function setItemsList() {
     try {
@@ -44,7 +45,7 @@ export function Refused() {
         ...item,
         category: capitalizeFirstLetter(item.category),
         local: capitalizeFirstLetter(item.local),
-        photoFilename: getImageUrl(item.photoFilename),
+        photoFilename: getPublicUrl(supabase, item.photoFilename),
         onPress() {
           void handleDeleteRequest(item.id);
         },
@@ -99,7 +100,7 @@ export function Refused() {
           refreshing={refreshing}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Item
+            <WithdrawItem
               title={item.name}
               location={item.local}
               photoUrl={item.photoFilename}

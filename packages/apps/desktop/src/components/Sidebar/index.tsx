@@ -4,7 +4,6 @@ import { IoExitOutline, IoNotificationsOutline } from "react-icons/io5";
 import { RiFileList3Line } from "react-icons/ri";
 import { Link, useLocation } from "react-router-dom";
 
-import type { SidebarLink } from "@encontrei/@types/SidebarLink";
 import { useTheme } from "@encontrei/hooks/useTheme";
 import { supabase } from "@encontrei/lib/supabase";
 
@@ -12,6 +11,12 @@ import { Badge } from "../Badge";
 import { Logo } from "../Icons/Logo";
 import { ThemeIcon } from "../Icons/Theme";
 import { Tooltip } from "../Tooltip";
+
+type SidebarLink = {
+  path: string;
+  icon: JSX.Element;
+  text: string;
+};
 
 const paths = {
   inventory: "/",

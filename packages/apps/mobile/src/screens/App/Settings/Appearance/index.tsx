@@ -4,8 +4,8 @@ import { Switch } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components/native";
 
-import SettingsOption from "@encontrei/components/General/SettingsOption";
 import { useCustomTheme } from "@encontrei/hooks/useCustomTheme";
+import SettingsOption from "@encontrei/screens/App/Settings/components/SettingsOption";
 
 import { Container, Options, OptionsContainer } from "../styles";
 

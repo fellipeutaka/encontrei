@@ -7,12 +7,16 @@ import { registerRootComponent } from "expo";
 
 import "react-native-url-polyfill/auto";
 
+import { SWRSupabaseProvider } from "@encontrei/contexts/SWRSupabaseContext";
+
 import { App } from "./src/App";
 
 function Index() {
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <App />
+      <SWRSupabaseProvider>
+        <App />
+      </SWRSupabaseProvider>
     </SafeAreaProvider>
   );
 }

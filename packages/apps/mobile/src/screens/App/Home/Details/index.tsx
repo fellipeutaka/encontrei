@@ -17,14 +17,19 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-import type { InventoryWithdraw } from "@encontrei/@types/InventoryWithdraw";
 import * as Button from "@encontrei/components/Controllers/Button";
 import { useHomeRouteParams } from "@encontrei/hooks/useHomeRouteParams";
+import { useToast } from "@encontrei/hooks/useToast";
 import { supabase } from "@encontrei/lib/supabase";
+import {
+  InventoryWithdraw,
+  SupabaseInventoryWithdraw,
+} from "@encontrei/shared-constants";
+import { getPublicUrl } from "@encontrei/shared-utils";
 import { formatDate } from "@encontrei/utils/formatDate";
-import Toast from "@encontrei/utils/toast";
 
 export function Details() {
+  const toast = useToast();
   const [isRequesting, setIsRequesting] = useState(false);
   const { goBack } = useNavigation();
   const { params } = useHomeRouteParams<"Details">();
@@ -54,37 +59,44 @@ export function Details() {
 
   async function handleRequestItem() {
     setIsRequesting(true);
-    try {
-      const userId = supabase.auth.user()?.id;
+    const userId = supabase.auth.user()?.id;
 
-      const { data } = await supabase
-        .from<InventoryWithdraw>("inventoryWithdraw")
-        .select("*")
-        .match({
-          inventoryId: params.id,
-          userId,
-        })
-        .throwOnError();
+    const { data, error } = await supabase
+      .from<InventoryWithdraw>("inventoryWithdraw")
+      .select("*")
+      .match({
+        inventoryId: params.id,
+        userId,
+      })
+      .throwOnError();
 
-      if (data?.length && data?.length > 0) {
-        Toast("Erro", "Você já solicitou por esse item");
-        setIsRequesting(false);
-      } else {
-        await supabase
-          .from<InventoryWithdraw>("inventoryWithdraw")
-          .insert({
-            inventoryId: params.id,
-            userId,
-          })
-          .throwOnError();
-        Toast("Sucesso", "Enviado com sucesso");
-        goBack();
-      }
-    } catch (err) {
-      Toast("Erro", "Ocorreu um erro. Tente novamente mais tarde");
+    if (error) {
       setIsRequesting(false);
-      console.error(err);
+      return toast({
+        message: "Ocorreu um erro. Tente novamente mais tarde",
+        type: "error",
+      });
     }
+
+    if (data.length > 0) {
+      setIsRequesting(false);
+      return toast({
+        message: "Você já solicitou por esse item",
+        type: "error",
+      });
+    }
+    await supabase
+      .from<SupabaseInventoryWithdraw>("inventoryWithdraw")
+      .insert({
+        inventoryId: params.id,
+        userId,
+      })
+      .throwOnError();
+    toast({
+      message: "Enviado com sucesso",
+      type: "success",
+    });
+    goBack();
   }
 
   return (
@@ -101,7 +113,7 @@ export function Details() {
           onHandlerStateChange={onPinchStateChange}
         >
           <Animated.Image
-            source={{ uri: params.photoUrl }}
+            source={{ uri: getPublicUrl(supabase, params.photoFilename) }}
             style={{
               width: Dimensions.get("screen").width,
               height: Dimensions.get("screen").height,

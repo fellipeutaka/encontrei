@@ -1,15 +1,38 @@
-import { supabase } from "@encontrei/lib/supabase";
+import { useQuery } from "supabase-swr";
 
-export async function getItems<T>(
-  table:
-    | "inventory"
-    | "inventoryFound"
-    | "inventoryWithdraw"
-    | "inventoryWithdrawAccepted"
-    | "inventoryWithdrawRefused",
-  select?: string
-) {
-  const { data } = await supabase.from<T>(table).select(select).throwOnError();
+import type { Table } from "@encontrei/shared-constants";
 
-  return data;
+export function getItems<T>(table: Table) {
+  if (table === "inventory") {
+    return useQuery<T>(table, {}, []);
+  }
+  if (table === "inventoryWithdraw") {
+    return useQuery<T>(
+      table,
+      {
+        columns:
+          "id, requestedAt, user:userId ( id, email, raw_user_meta_data->name ), inventory:inventoryId ( * )",
+      },
+      []
+    );
+  }
+  if (table === "inventoryFound") {
+    return useQuery<T>(
+      table,
+      {
+        columns: "*, user:userId ( email, raw_user_meta_data->name )",
+      },
+      []
+    );
+  }
+  if (table === "inventoryWithdrawAccepted") {
+    return useQuery<T>(
+      table,
+      {
+        columns: "*, user:userId ( email, raw_user_meta_data->name )",
+      },
+      []
+    );
+  }
+  throw new Error("Invalid Table");
 }

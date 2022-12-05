@@ -1,9 +1,9 @@
 {
-  "name": "@encontrei/constants",
+  "name": "@encontrei/shared-constants",
   "version": "1.0.0",
   "private": true,
   "main": "src/index.ts",
   "dependencies": {
-    "@encontrei/utils": "*"
+    "@encontrei/shared-utils": "*"
   }
 }

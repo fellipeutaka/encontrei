@@ -2,8 +2,8 @@ import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import Toast from "src/utils/toast";
 import { useTheme } from "styled-components/native";
 
-import SettingsOption from "@encontrei/components/General/SettingsOption";
 import { supabase } from "@encontrei/lib/supabase";
+import SettingsOption from "@encontrei/screens/App/Settings/components/SettingsOption";
 
 import { Container, Options, OptionsContainer } from "../styles";
 

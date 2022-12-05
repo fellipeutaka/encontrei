@@ -4,8 +4,8 @@ import { Switch } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "styled-components/native";
 
-import SettingsOption from "@encontrei/components/General/SettingsOption";
 import { ScrollIcon } from "@encontrei/components/Icons/ScrollIcon";
+import SettingsOption from "@encontrei/screens/App/Settings/components/SettingsOption";
 
 import { Container, Options, OptionsContainer } from "../styles";
 

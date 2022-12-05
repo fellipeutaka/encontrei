@@ -1,45 +1,31 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FlatList, View } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
 
-import type { InventoryWithdrawSent } from "@encontrei/@types/InventoryWithdraw";
-import { Item } from "@encontrei/components/Layout/Item";
+import { useFetch } from "@encontrei/hooks/useFetch";
+import { useToast } from "@encontrei/hooks/useToast";
 import { supabase } from "@encontrei/lib/supabase";
 import { Loading } from "@encontrei/screens/Loading";
-import { getImageUrl } from "@encontrei/utils/getImageUrl";
-import Toast from "@encontrei/utils/toast";
+import type { InventoryWithdraw } from "@encontrei/shared-constants";
+import { getPublicUrl } from "@encontrei/shared-utils";
+import { getItems } from "@encontrei/utils/getItems";
 
-async function fetchItems() {
-  const userId = supabase.auth.user()?.id;
-  const { data } = await supabase
-    .from<InventoryWithdrawSent>("inventoryWithdraw")
-    .select(
-      `
-        id, userId, requestedAt,
-        inventory:inventoryId ( * )
-      `
-    )
-    .match({
-      userId,
-    })
-    .throwOnError();
-  return data;
-}
+import { WithdrawItem } from "../components/WithdrawItem";
 
 export function Sent() {
-  const [items, setItems] = useState<InventoryWithdrawSent[] | null>(null);
+  const inventoryWithdrawQuery =
+    getItems<InventoryWithdraw>("inventoryWithdraw");
+  const { response, error, isLoading, mutate } = useFetch(
+    inventoryWithdrawQuery
+  );
   const [isRefreshing, setIsRefreshing] = useState(false);
-
-  useEffect(() => {
-    fetchItems().then(setItems).catch(console.error);
-  }, []);
+  const toast = useToast();
 
   async function handleRefreshList() {
     setIsRefreshing(true);
     try {
-      const items = await fetchItems();
-      setItems(items);
+      await mutate();
     } catch (err) {
       console.error(err);
     } finally {
@@ -54,30 +40,40 @@ export function Sent() {
         .delete()
         .match({ id })
         .throwOnError();
-      Toast("Sucesso", "Pedido cancelado");
-      setItems((state) => state?.filter((item) => item.id !== id) ?? state);
+      await mutate();
+      toast({
+        type: "success",
+        message: "Pedido cancelado",
+      });
     } catch (err) {
       console.error(err);
     }
   }
 
-  if (!items) {
+  if (isLoading) {
     return <Loading />;
+  }
+
+  if (error) {
+    toast({
+      type: "error",
+      message: error.message,
+    });
   }
 
   return (
     <View className="flex-1 justify-center items-center p-6 bg-zinc-50 dark:bg-zinc-900">
       <FlatList
-        data={items}
+        data={response?.data}
         onRefresh={handleRefreshList}
         refreshing={isRefreshing}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Item
+          <WithdrawItem
             title={item.inventory.name}
             location={item.inventory.local}
-            photoUrl={item.inventory.photoFilename}
-            onPress={() => {}}
+            photoUrl={getPublicUrl(supabase, item.inventory.photoFilename)}
+            onPress={async () => await handleDeleteRequest(item.id)}
             rightIcon={
               <Feather
                 name="delete"

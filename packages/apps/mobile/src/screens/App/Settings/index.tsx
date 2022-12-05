@@ -4,7 +4,7 @@ import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import type { SettingsStackNavigationProps } from "@encontrei/@types/routes/NavigationProps/App/Settings";
-import { SettingsOption } from "@encontrei/components/General/SettingsOption";
+import { SettingsOption } from "@encontrei/screens/App/Settings/components/SettingsOption";
 
 export function Settings() {
   const { navigate } = useNavigation<SettingsStackNavigationProps>();

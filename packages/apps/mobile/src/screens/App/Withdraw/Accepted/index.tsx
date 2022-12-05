@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 
 import { Feather } from "@expo/vector-icons";
-import { useTheme } from "styled-components/native";
-
-import Spinner from "@encontrei/components/General/Spinner";
-import { Center } from "@encontrei/components/Layout/Center";
-import Item from "@encontrei/components/Layout/Item";
-import { supabase } from "@encontrei/lib/supabase";
-import { Container, ItemsContainer } from "@encontrei/screens/App/Home/styles";
 import {
   InventoryWithdrawAccepted,
   InventoryWithdrawAcceptedItems,
 } from "src/@types/InventoryWithdraw";
-import { capitalizeFirstLetter } from "@encontrei/utils/capitalizeFirstLetter";
-import { getImageUrl } from "@encontrei/utils/getImageUrl";
+import { useTheme } from "styled-components/native";
 
+import Spinner from "@encontrei/components/General/Spinner";
+import { Center } from "@encontrei/components/Layout/Center";
+import { supabase } from "@encontrei/lib/supabase";
+import { Container, ItemsContainer } from "@encontrei/screens/App/Home/styles";
+import { getPublicUrl } from "@encontrei/shared-utils";
+import { capitalizeFirstLetter } from "@encontrei/utils/capitalizeFirstLetter";
+
+import { WithdrawItem } from "../components/WithdrawItem";
 import { ItemList } from "./styles";
 
 async function fetchItems() {
@@ -56,7 +56,7 @@ export function Accepted() {
         ...item,
         category: capitalizeFirstLetter(item.category),
         local: capitalizeFirstLetter(item.local),
-        photoFilename: getImageUrl(item.photoFilename),
+        photoFilename: getPublicUrl(supabase, item.photoFilename),
         onPress() {
           void handleDeleteRequest(item.id);
         },

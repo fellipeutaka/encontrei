@@ -13,6 +13,7 @@ import {
 } from "@encontrei/components/Controllers/TextField";
 import { KeyboardAvoidingView } from "@encontrei/components/General/KeyboardAvoidingView";
 import { Label } from "@encontrei/components/General/Label";
+import { useToast } from "@encontrei/hooks/useToast";
 import { supabase } from "@encontrei/lib/supabase";
 import { vibrate } from "@encontrei/utils/vibrate";
 import { email, password } from "@encontrei/utils/zodSchemas";
@@ -35,17 +36,19 @@ export function SignIn() {
   } = useForm<FormData>({
     resolver: zodResolver(signInSchema),
   });
-  const navigation = useNavigation<AuthStackNavigationProps>();
+  const { navigate } = useNavigation<AuthStackNavigationProps>();
+  const toast = useToast();
 
   async function signIn({ email, password }: FormData) {
-    try {
-      const { error } = await supabase.auth.signIn({
-        email,
-        password,
+    const { error } = await supabase.auth.signIn({
+      email,
+      password,
+    });
+    if (error) {
+      toast({
+        message: error.message,
+        type: "error",
       });
-      if (error) throw new Error(error.message);
-    } catch (err) {
-      console.error(err);
     }
   }
 
@@ -99,7 +102,7 @@ export function SignIn() {
         </View>
         <TouchableOpacity
           className="mt-4 self-end"
-          onPress={() => navigation.navigate("Forget")}
+          onPress={() => navigate("Forget")}
         >
           <Text className="text-base font-medium text-zinc-900 dark:text-zinc-50">
             Esqueci minha senha
@@ -112,10 +115,7 @@ export function SignIn() {
         >
           <Button.Text>Entrar</Button.Text>
         </Button.Root>
-        <TouchableOpacity
-          className="mt-4"
-          onPress={() => navigation.navigate("SignUp")}
-        >
+        <TouchableOpacity className="mt-4" onPress={() => navigate("SignUp")}>
           <Text className="font-medium text-zinc-900 dark:text-zinc-50">
             Não tem uma conta? Crie sua conta
           </Text>

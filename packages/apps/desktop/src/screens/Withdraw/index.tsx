@@ -5,7 +5,8 @@ import { DownloadButton } from "@encontrei/components/DownloadButton";
 import { RefuseButton } from "@encontrei/components/RefuseButton";
 import { SpinnerLoader } from "@encontrei/components/SpinnerLoader";
 import { Table } from "@encontrei/components/Table";
-import { useWithdraw } from "@encontrei/hooks/useWithdraw";
+
+import { useWithdraw } from "./useWithdraw";
 
 export function Withdraw() {
   const {

@@ -5,7 +5,8 @@ import { DownloadButton } from "@encontrei/components/DownloadButton";
 import { RefuseButton } from "@encontrei/components/RefuseButton";
 import { SpinnerLoader } from "@encontrei/components/SpinnerLoader";
 import { Table } from "@encontrei/components/Table";
-import { useFound } from "@encontrei/hooks/useFound";
+
+import { useFound } from "./useFound";
 
 export function Found() {
   const {

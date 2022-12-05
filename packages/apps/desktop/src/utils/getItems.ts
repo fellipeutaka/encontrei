@@ -1,17 +1,13 @@
 import { useQuery } from "supabase-swr";
 
-import type { Inventory } from "@encontrei/@types/Inventory";
-import type { InventoryFound } from "@encontrei/@types/InventoryFound";
-import type { InventoryWithdraw } from "@encontrei/@types/InventoryWithdraw";
-import type { InventoryWithdrawAccepted } from "@encontrei/@types/InventoryWithdrawAccepted";
-import type { Table } from "@encontrei/@types/Table";
+import type { Table } from "@encontrei/shared-constants";
 
-export function getItems(table: Table) {
+export function getItems<T>(table: Table) {
   if (table === "inventory") {
-    return useQuery<Inventory>(table, {}, []);
+    return useQuery<T>(table, {}, []);
   }
   if (table === "inventoryWithdraw") {
-    return useQuery<InventoryWithdraw>(
+    return useQuery<T>(
       table,
       {
         columns:
@@ -21,7 +17,7 @@ export function getItems(table: Table) {
     );
   }
   if (table === "inventoryFound") {
-    return useQuery<InventoryFound>(
+    return useQuery<T>(
       table,
       {
         columns: "*, user:userId ( email, raw_user_meta_data->name )",
@@ -30,7 +26,7 @@ export function getItems(table: Table) {
     );
   }
   if (table === "inventoryWithdrawAccepted") {
-    return useQuery<InventoryWithdrawAccepted>(
+    return useQuery<T>(
       table,
       {
         columns: "*, user:userId ( email, raw_user_meta_data->name )",
