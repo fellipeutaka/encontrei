@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { FlatList, Pressable, View } from "react-native";
 
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { MotiView as Container, useAnimationState } from "moti";
 import { styled } from "nativewind";
 
 import { HomeStackNavigationProps } from "@encontrei/@types/routes/NavigationProps/App/Home";
+import { Ionicons } from "@encontrei/components/Icons/ExpoIcons";
 import { useFetch } from "@encontrei/hooks/useFetch";
 import { useToast } from "@encontrei/hooks/useToast";
 import { WithdrawItem } from "@encontrei/screens/App/Withdraw/components/WithdrawItem";

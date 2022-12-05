@@ -14,10 +14,10 @@ import {
   PinchGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
 
-import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import * as Button from "@encontrei/components/Controllers/Button";
+import { Feather } from "@encontrei/components/Icons/ExpoIcons";
 import { useHomeRouteParams } from "@encontrei/hooks/useHomeRouteParams";
 import { useToast } from "@encontrei/hooks/useToast";
 import { supabase } from "@encontrei/lib/supabase";

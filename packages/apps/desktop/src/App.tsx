@@ -1,9 +1,8 @@
 import { HashRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
-import { useSession } from "supabase-swr";
-
 import { ThemeProvider } from "@encontrei/contexts/ThemeContext";
+import { useSession } from "@encontrei/hooks/useSession";
 import { AppRoutes } from "@encontrei/routes/AppRoutes";
 import { AuthRoutes } from "@encontrei/routes/AuthRoutes";
 

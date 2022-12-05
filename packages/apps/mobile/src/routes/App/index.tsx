@@ -1,10 +1,13 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { MaterialCommunityIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useColorScheme } from "nativewind";
 
 import type { AppStackParamsList } from "@encontrei/@types/routes/ParamsList/App";
+import {
+  MaterialCommunityIcons,
+  SimpleLineIcons,
+} from "@encontrei/components/Icons/ExpoIcons";
 import { ScrollIcon } from "@encontrei/components/Icons/ScrollIcon";
 import { HomeStack } from "@encontrei/routes/Home";
 /* import { SettingsStack } from "@encontrei/routes/Settings"; */

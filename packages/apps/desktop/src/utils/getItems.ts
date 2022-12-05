@@ -1,5 +1,4 @@
-import { useQuery } from "supabase-swr";
-
+import { useQuery } from "@encontrei/hooks/useQuery";
 import type { Table } from "@encontrei/shared-constants";
 
 export function getItems<T>(table: Table) {

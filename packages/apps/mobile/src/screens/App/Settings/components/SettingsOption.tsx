@@ -1,6 +1,6 @@
 import { TouchableOpacity, View, Text } from "react-native";
 
-import { Feather } from "@expo/vector-icons";
+import { Feather } from "@encontrei/components/Icons/ExpoIcons";
 
 type SettingsOptionProps = {
   icon: JSX.Element;

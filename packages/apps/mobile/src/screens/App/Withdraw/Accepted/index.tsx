@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { Feather } from "@expo/vector-icons";
 import {
   InventoryWithdrawAccepted,
   InventoryWithdrawAcceptedItems,
@@ -8,6 +7,7 @@ import {
 import { useTheme } from "styled-components/native";
 
 import Spinner from "@encontrei/components/General/Spinner";
+import { Feather } from "@encontrei/components/Icons/ExpoIcons";
 import { Center } from "@encontrei/components/Layout/Center";
 import { supabase } from "@encontrei/lib/supabase";
 import { Container, ItemsContainer } from "@encontrei/screens/App/Home/styles";

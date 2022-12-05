@@ -7,9 +7,9 @@ import {
   ViewProps,
 } from "react-native";
 
-import { Feather, Fontisto } from "@expo/vector-icons";
 import { clsx } from "clsx";
 
+import { Fontisto, Feather } from "@encontrei/components/Icons/ExpoIcons";
 import { colors } from "@encontrei/tailwind-config";
 
 export function Root(props: ViewProps) {

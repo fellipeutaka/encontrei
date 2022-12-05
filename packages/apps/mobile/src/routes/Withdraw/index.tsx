@@ -1,7 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useColorScheme } from "nativewind";
 import type { WithdrawStackParamsList } from "src/@types/routes/ParamsList/App/Withdraw";
+
+import { Ionicons } from "@encontrei/components/Icons/ExpoIcons";
 
 // import { Accepted } from "@encontrei/screens/App/Withdraw/Accepted";
 // import { Refused } from "@encontrei/screens/App/Withdraw/Refused";

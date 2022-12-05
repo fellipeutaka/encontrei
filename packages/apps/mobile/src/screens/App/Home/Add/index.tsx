@@ -1,7 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
 import { ScrollView, Image, Text, View, TouchableOpacity } from "react-native";
 
-import { Feather } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -17,6 +16,7 @@ import { Select } from "@encontrei/components/Controllers/Select";
 import * as TextField from "@encontrei/components/Controllers/TextField";
 import { KeyboardAvoidingView } from "@encontrei/components/General/KeyboardAvoidingView";
 import { Label } from "@encontrei/components/General/Label";
+import { Feather } from "@encontrei/components/Icons/ExpoIcons";
 import { useToast } from "@encontrei/hooks/useToast";
 import { supabase } from "@encontrei/lib/supabase";
 import {

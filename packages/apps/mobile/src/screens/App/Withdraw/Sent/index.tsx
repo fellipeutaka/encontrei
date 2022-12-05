@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { FlatList, View } from "react-native";
 
-import { Feather } from "@expo/vector-icons";
-
+import { Feather } from "@encontrei/components/Icons/ExpoIcons";
 import { useFetch } from "@encontrei/hooks/useFetch";
 import { useToast } from "@encontrei/hooks/useToast";
 import { supabase } from "@encontrei/lib/supabase";

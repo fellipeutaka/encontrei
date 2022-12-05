@@ -1,7 +1,11 @@
-import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import Toast from "src/utils/toast";
 import { useTheme } from "styled-components/native";
 
+import {
+  Feather,
+  FontAwesome,
+  Ionicons,
+} from "@encontrei/components/Icons/ExpoIcons";
 import { supabase } from "@encontrei/lib/supabase";
 import SettingsOption from "@encontrei/screens/App/Settings/components/SettingsOption";
 

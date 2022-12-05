@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Switch } from "react-native";
 
-import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components/native";
 
+import { Feather } from "@encontrei/components/Icons/ExpoIcons";
 import { useCustomTheme } from "@encontrei/hooks/useCustomTheme";
 import SettingsOption from "@encontrei/screens/App/Settings/components/SettingsOption";
 

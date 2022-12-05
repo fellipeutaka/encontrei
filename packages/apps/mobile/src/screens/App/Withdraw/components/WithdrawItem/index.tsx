@@ -1,8 +1,8 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
-import { Feather, Ionicons } from "@expo/vector-icons";
 import { useColorScheme } from "nativewind";
 
+import { Feather, Ionicons } from "@encontrei/components/Icons/ExpoIcons";
 import { supabase } from "@encontrei/lib/supabase";
 import { getPublicUrl } from "@encontrei/shared-utils";
 import { colors } from "@encontrei/tailwind-config";

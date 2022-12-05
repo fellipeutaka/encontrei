@@ -1,9 +1,13 @@
 import { ScrollView, View } from "react-native";
 
-import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import type { SettingsStackNavigationProps } from "@encontrei/@types/routes/NavigationProps/App/Settings";
+import {
+  AntDesign,
+  Feather,
+  Ionicons,
+} from "@encontrei/components/Icons/ExpoIcons";
 import { SettingsOption } from "@encontrei/screens/App/Settings/components/SettingsOption";
 
 export function Settings() {

@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as Dialog from "@radix-ui/react-dialog";
 import { clsx } from "clsx";
 import { motion } from "framer-motion";
-import { Query } from "supabase-swr";
 import { useSWRConfig } from "swr";
 import { z } from "zod";
 
@@ -64,7 +63,7 @@ const itemSchema = z.object({
 type FormData = z.output<typeof itemSchema>;
 
 export function CreateItemDialog() {
-  const inventoryQuery = getItems("inventory") as Query<Inventory>;
+  const inventoryQuery = getItems<Inventory>("inventory");
   const { mutate } = useSWRConfig();
   const {
     handleSubmit,
