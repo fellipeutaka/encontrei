@@ -4,7 +4,6 @@ import { FlatList, Pressable, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { MotiView, useAnimationState } from "moti";
-import { Query } from "supabase-swr";
 
 import { HomeStackNavigationProps } from "@encontrei/@types/routes/NavigationProps/App/Home";
 import { useFetch } from "@encontrei/hooks/useFetch";
@@ -15,9 +14,8 @@ import { Inventory } from "@encontrei/shared-constants";
 import { getItems } from "@encontrei/utils/getItems";
 
 export function Home() {
-  const inventoryQuery = getItems("inventory") as Query<Inventory>;
-  const { response, error, isLoading, mutate } =
-    useFetch<Inventory>(inventoryQuery);
+  const inventoryQuery = getItems<Inventory>("inventory");
+  const { response, error, isLoading, mutate } = useFetch(inventoryQuery);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { navigate } = useNavigation<HomeStackNavigationProps>();
   const toast = useToast();

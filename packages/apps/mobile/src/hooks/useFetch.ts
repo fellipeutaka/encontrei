@@ -1,4 +1,5 @@
-import { Query, useSelect } from "supabase-swr";
+import { Query } from "./useQuery";
+import { useSelect } from "./useSelect";
 
 export function useFetch<T>(query: Query<T>) {
   const { data, error, mutate } = useSelect(query, {});

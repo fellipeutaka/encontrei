@@ -4,8 +4,8 @@ import ToastContainer from "react-native-toast-message";
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
-import { useSession } from "supabase-swr";
 
+import { useSession } from "@encontrei/hooks/useSession";
 import { AppStack } from "@encontrei/routes/App";
 import { AuthStack } from "@encontrei/routes/Auth";
 
