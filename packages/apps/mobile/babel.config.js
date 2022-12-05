@@ -5,10 +5,7 @@ module.exports = function (api) {
     plugins: [
       "inline-dotenv",
       "react-native-reanimated/plugin",
-      [
-        "nativewind/babel",
-        { allowModuleTransform: ["@expo/vector-icons, moti"] },
-      ],
+      "nativewind/babel",
       [
         "module-resolver",
         {

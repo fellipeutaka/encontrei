@@ -3,7 +3,8 @@ import { FlatList, Pressable, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { MotiView, useAnimationState } from "moti";
+import { MotiView as Container, useAnimationState } from "moti";
+import { styled } from "nativewind";
 
 import { HomeStackNavigationProps } from "@encontrei/@types/routes/NavigationProps/App/Home";
 import { useFetch } from "@encontrei/hooks/useFetch";
@@ -12,6 +13,8 @@ import { WithdrawItem } from "@encontrei/screens/App/Withdraw/components/Withdra
 import { Loading } from "@encontrei/screens/Loading";
 import { Inventory } from "@encontrei/shared-constants";
 import { getItems } from "@encontrei/utils/getItems";
+
+const MotiView = styled(Container);
 
 export function Home() {
   const inventoryQuery = getItems<Inventory>("inventory");
