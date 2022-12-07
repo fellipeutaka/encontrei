@@ -17,9 +17,11 @@
   "main": "index.tsx",
   "scripts": {
     "dev": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "lint": "eslint . --ext ts,tsx"
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "lint": "eslint . --ext ts,tsx",
+    "postinstall": "cd ../../.. && yarn build --filter=mobile...",
+    "start": "expo start --dev-client"
   },
   "dependencies": {
     "@encontrei/shared-constants": "*",
@@ -29,19 +31,23 @@
     "@nandorojo/swr-react-native": "^1.2.0",
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-native-community/netinfo": "9.3.0",
+    "@react-native-picker/picker": "2.4.2",
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/material-top-tabs": "^6.2.2",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",
     "@supabase/supabase-js": "^1.35.3",
     "clsx": "^1.2.1",
-    "expo": "~46.0.16",
+    "expo": "~46.0.17",
+    "expo-dev-client": "~1.3.1",
     "expo-image-picker": "~13.3.1",
+    "expo-splash-screen": "~0.16.2",
     "expo-status-bar": "~1.4.0",
     "lottie-react-native": "5.1.3",
     "moti": "^0.18.0",
     "nativewind": "^2.0.11",
     "react": "18.0.0",
+    "react-dom": "18.0.0",
     "react-hook-form": "^7.37.0",
     "react-native": "0.69.6",
     "react-native-gesture-handler": "~2.5.0",
@@ -55,6 +61,7 @@
     "react-native-tab-view": "^3.1.1",
     "react-native-toast-message": "^2.1.5",
     "react-native-url-polyfill": "^1.3.0",
+    "react-native-web": "~0.18.7",
     "zod": "^3.19.1"
   },
   "devDependencies": {
