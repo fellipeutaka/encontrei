@@ -58,15 +58,15 @@ async function createWindow() {
   win.focus();
 
   if (app.isPackaged) {
-    win.loadFile(indexHtml);
+    void win.loadFile(indexHtml);
   } else {
-    win.loadURL(url);
+    void win.loadURL(url);
   }
 }
 
 async function registerListeners() {
   ipcMain.on("log", (_, message) => {
-    console.log(message);
+    console.warn(message);
   });
   ipcMain.handle("messageBox", async (_, options) => {
     if (win) {
@@ -78,14 +78,14 @@ async function registerListeners() {
     dialog.showErrorBox("Erro", message);
   });
   ipcMain.on("openExternal", (_, link) => {
-    shell.openExternal(link);
+    void shell.openExternal(link);
   });
   ipcMain.on("copyText", (_, text) => {
     clipboard.writeText(text);
   });
 }
 
-app.whenReady().then(createWindow).then(registerListeners);
+void app.whenReady().then(createWindow).then(registerListeners);
 
 app.on("window-all-closed", () => {
   win = null;
@@ -108,11 +108,11 @@ app.on("activate", () => {
   if (allWindows.length) {
     allWindows[0].focus();
   } else {
-    createWindow();
+    void createWindow();
   }
 });
 
-ipcMain.handle("open-win", (event, arg) => {
+ipcMain.handle("open-win", (event, arg: string) => {
   const childWindow = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
@@ -122,8 +122,8 @@ ipcMain.handle("open-win", (event, arg) => {
   });
 
   if (app.isPackaged) {
-    childWindow.loadFile(indexHtml, { hash: arg });
+    void childWindow.loadFile(indexHtml, { hash: arg });
   } else {
-    childWindow.loadURL(`${url}#${arg}`);
+    void childWindow.loadURL(`${url}#${arg}`);
   }
 });

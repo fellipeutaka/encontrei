@@ -1,37 +1,17 @@
-import { useForm, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { View, Text, TouchableOpacity } from "react-native";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigation } from "@react-navigation/native";
-import { z } from "zod";
 
 import * as Button from "@encontrei/components/Controllers/Button";
 import { EmailField } from "@encontrei/components/Controllers/TextField";
+import { FormError } from "@encontrei/components/General/FormError";
 import { KeyboardAvoidingView } from "@encontrei/components/General/KeyboardAvoidingView";
 import { Label } from "@encontrei/components/General/Label";
-import { supabase } from "@encontrei/lib/supabase";
-import { vibrate } from "@encontrei/utils/vibrate";
-import { email } from "@encontrei/utils/zodSchemas";
 
-const forgetSchema = z.object({
-  email,
-});
-
-type FormData = z.output<typeof forgetSchema>;
+import { useForget } from "./useForget";
 
 export function Forget() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({
-    resolver: zodResolver(forgetSchema),
-  });
-  const navigation = useNavigation();
-
-  async function recoverPassword({ email }: FormData) {
-    console.log(email);
-  }
+  const { control, errors, isSubmitting, goBack, handleRecoverPassword } =
+    useForget();
 
   return (
     <KeyboardAvoidingView>
@@ -55,20 +35,16 @@ export function Forget() {
               />
             )}
           />
-          {errors.email && (
-            <Text className="text-red-600 font-semibold my-1">
-              {errors.email.message}
-            </Text>
-          )}
+          <FormError message={errors.email?.message} />
         </View>
         <Button.Root
           className="mt-12 mb-4 h-16 rounded-full"
-          onPress={handleSubmit(recoverPassword, () => vibrate())}
+          onPress={handleRecoverPassword}
           isLoading={isSubmitting}
         >
           <Button.Text>Recuperar</Button.Text>
         </Button.Root>
-        <TouchableOpacity className="mt-4" onPress={navigation.goBack}>
+        <TouchableOpacity className="mt-4" onPress={goBack}>
           <Text className="font-medium text-zinc-900 dark:text-zinc-50">
             Lembrou de sua senha? Entre agora
           </Text>

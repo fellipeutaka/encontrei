@@ -1,7 +1,7 @@
 {
   "name": "@encontrei/desktop",
   "description": "Encontrei Desktop App",
-  "version": "1.6.0",
+  "version": "1.8.0",
   "author": {
     "name": "Fellipe Utaka",
     "email": "fellipeutaka@gmail.com"
@@ -36,10 +36,10 @@
     "@tanstack/react-table": "^8.5.28",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
-    "@vitejs/plugin-react": "^2.1.0",
+    "@vitejs/plugin-react": "^2.2.0",
     "autoprefixer": "^10.4.13",
     "clsx": "^1.2.1",
-    "electron": "^21.1.0",
+    "electron": "22.0.0",
     "electron-builder": "^23.3.3",
     "framer-motion": "^7.6.7",
     "lottie-react": "^2.2.1",
@@ -52,10 +52,11 @@
     "react-router-dom": "^6.3.0",
     "react-spring": "^9.5.2",
     "react-toastify": "^9.0.8",
+    "swr": "^1.3.0",
     "tailwind-merge": "^1.8.0",
-    "vite": "^3.1.4",
-    "vite-electron-plugin": "^0.4.6",
-    "vite-plugin-electron-renderer": "^0.10.1",
+    "vite": "3.2.5",
+    "vite-electron-plugin": "^0.5.2",
+    "vite-plugin-electron-renderer": "^0.11.3",
     "zod": "^3.19.1"
   },
   "debug": {

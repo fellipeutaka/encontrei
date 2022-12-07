@@ -202,9 +202,12 @@ export function useFound() {
     }
   }, [response]);
 
+  if (error) {
+    toast.error(error.message);
+  }
+
   return {
     response,
-    error,
     isLoading,
     mutate,
     table,

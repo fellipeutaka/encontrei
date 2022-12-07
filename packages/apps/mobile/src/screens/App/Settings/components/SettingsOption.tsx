@@ -26,18 +26,19 @@ export function SettingsOption({
       {rightElement ?? (
         <Feather
           name="chevron-right"
-          className="w-5 h-5 text-zinc-800 dark:text-zinc-100"
+          size={20}
+          className="text-zinc-800 dark:text-zinc-100"
         />
       )}
     </>
   );
 
   return (
-    <View className="flex-row justify-between items-center border border-zinc-600/50 h-16">
+    <View className="flex-row justify-between items-center border-b border-zinc-600/50 w-full h-16">
       {isTouchable ? (
         <TouchableOpacity
           className="flex-row justify-between items-center w-full h-full"
-          {...onPress}
+          onPress={onPress}
         >
           {Option}
         </TouchableOpacity>

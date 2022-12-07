@@ -1,42 +1,46 @@
-import Toast from "src/utils/toast";
-import { useTheme } from "styled-components/native";
+import { ScrollView, View } from "react-native";
 
 import {
   Feather,
   FontAwesome,
   Ionicons,
 } from "@encontrei/components/Icons/ExpoIcons";
+import { useToast } from "@encontrei/hooks/useToast";
 import { supabase } from "@encontrei/lib/supabase";
-import SettingsOption from "@encontrei/screens/App/Settings/components/SettingsOption";
 
-import { Container, Options, OptionsContainer } from "../styles";
+import { SettingsOption } from "../components/SettingsOption";
 
 export function Account() {
-  const theme = useTheme();
+  const toast = useToast();
 
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      Toast("Error", error.message);
+      toast({
+        type: "error",
+        message: error.message,
+      });
     }
   }
 
+  function toastNotAvaliableFeatures() {
+    toast({
+      type: "info",
+      message: "Em breve 👀",
+    });
+  }
+
   return (
-    <Container>
-      <OptionsContainer>
-        <Options>
+    <View className="flex-1 justify-center items-center dark:bg-zinc-900">
+      <View className="w-full px-6">
+        <ScrollView>
           <SettingsOption
             title="Editar perfil"
             icon={
-              <Feather name="edit" size={20} color={theme.colors.mauve12} />
+              <Feather name="edit" size={20} className="dark:text-zinc-50" />
             }
-            onPress={() =>
-              Toast(
-                "Aviso",
-                "Essa funcionalidade não está disponível no momento"
-              )
-            }
+            onPress={toastNotAvaliableFeatures}
           />
           <SettingsOption
             title="Alterar e-mail"
@@ -44,15 +48,10 @@ export function Account() {
               <FontAwesome
                 name="envelope-o"
                 size={20}
-                color={theme.colors.mauve12}
+                className="dark:text-zinc-50"
               />
             }
-            onPress={() =>
-              Toast(
-                "Aviso",
-                "Essa funcionalidade não está disponível no momento"
-              )
-            }
+            onPress={toastNotAvaliableFeatures}
           />
           <SettingsOption
             title="Alterar senha"
@@ -60,15 +59,10 @@ export function Account() {
               <Ionicons
                 name="key-outline"
                 size={20}
-                color={theme.colors.mauve12}
+                className="dark:text-zinc-50"
               />
             }
-            onPress={() =>
-              Toast(
-                "Aviso",
-                "Essa funcionalidade não está disponível no momento"
-              )
-            }
+            onPress={toastNotAvaliableFeatures}
           />
           <SettingsOption
             title="Sair"
@@ -76,13 +70,13 @@ export function Account() {
               <Ionicons
                 name="exit-outline"
                 size={20}
-                color={theme.colors.mauve12}
+                className="dark:text-zinc-50"
               />
             }
             onPress={handleSignOut}
           />
-        </Options>
-      </OptionsContainer>
-    </Container>
+        </ScrollView>
+      </View>
+    </View>
   );
 }

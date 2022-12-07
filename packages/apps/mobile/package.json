@@ -1,7 +1,7 @@
 {
   "name": "@encontrei/mobile",
   "description": "Encontrei Mobile App",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "author": {
     "name": "Fellipe Utaka",
     "email": "fellipeutaka@gmail.com"
@@ -26,7 +26,9 @@
     "@encontrei/shared-utils": "*",
     "@encontrei/tailwind-config": "*",
     "@hookform/resolvers": "^2.9.10",
+    "@nandorojo/swr-react-native": "^1.2.0",
     "@react-native-async-storage/async-storage": "~1.17.3",
+    "@react-native-community/netinfo": "9.3.0",
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/material-top-tabs": "^6.2.2",
     "@react-navigation/native": "^6.0.10",

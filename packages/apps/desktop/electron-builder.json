@@ -33,3 +33,4 @@
     "artifactName": "${productName}-Linux-${version}.${ext}"
   }
 }
+

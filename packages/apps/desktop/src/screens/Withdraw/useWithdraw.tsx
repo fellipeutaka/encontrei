@@ -217,9 +217,12 @@ export function useWithdraw() {
     }
   }, [response]);
 
+  if (error) {
+    toast.error(error.message);
+  }
+
   return {
     response,
-    error,
     isLoading,
     mutate,
     table,

@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
+import useSWRNative from "@nandorojo/swr-react-native";
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
-import useSWR, { SWRConfiguration, SWRResponse } from "swr";
+import type { SWRConfiguration, SWRResponse } from "swr";
 
 import { supabase } from "@encontrei/lib/supabase";
 
@@ -28,5 +29,5 @@ export function useSelect<Data>(
   swrConfig: Omit<SWRConfiguration, "fetcher">
 ): SWRResponse<PostgrestSuccessResponse<Data>, PostgrestError> {
   const fetcher = useFetcher<Data>();
-  return useSWR(query, fetcher, swrConfig);
+  return useSWRNative(query, fetcher, swrConfig);
 }

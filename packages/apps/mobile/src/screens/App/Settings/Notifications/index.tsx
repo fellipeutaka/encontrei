@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { Switch } from "react-native";
+import { ScrollView, Switch, View } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTheme } from "styled-components/native";
+import { useColorScheme } from "nativewind";
 
 import { ScrollIcon } from "@encontrei/components/Icons/ScrollIcon";
-import SettingsOption from "@encontrei/screens/App/Settings/components/SettingsOption";
+import { colors } from "@encontrei/tailwind-config";
 
-import { Container, Options, OptionsContainer } from "../styles";
+import { SettingsOption } from "../components/SettingsOption";
 
 export function Notifications() {
-  const theme = useTheme();
   const [orderNotification, setOrderNotification] = useState(true);
+  const { colorScheme } = useColorScheme();
 
   async function toggleNotification() {
     await AsyncStorage.setItem(
@@ -22,12 +22,18 @@ export function Notifications() {
   }
 
   return (
-    <Container>
-      <OptionsContainer>
-        <Options>
+    <View className="flex-1 justify-center items-center dark:bg-zinc-900">
+      <View className="w-full px-6">
+        <ScrollView>
           <SettingsOption
             title="Pedidos"
-            icon={<ScrollIcon color={theme.colors.mauve12} />}
+            icon={
+              <ScrollIcon
+                color={
+                  colorScheme === "dark" ? colors.zinc[50] : colors.zinc[900]
+                }
+              />
+            }
             isTouchable={false}
             rightElement={
               <Switch
@@ -35,14 +41,14 @@ export function Notifications() {
                 onValueChange={toggleNotification}
                 trackColor={{
                   false: "#767676",
-                  true: theme.colors.violet9,
+                  true: colors.violet[600],
                 }}
                 thumbColor="#FFFFFF"
               />
             }
           />
-        </Options>
-      </OptionsContainer>
-    </Container>
+        </ScrollView>
+      </View>
+    </View>
   );
 }

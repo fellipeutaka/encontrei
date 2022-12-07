@@ -13,7 +13,6 @@ export function Withdraw() {
     response,
     mutate,
     isLoading,
-    error,
     table,
     handleAcceptItem,
     handleRefuseItem,

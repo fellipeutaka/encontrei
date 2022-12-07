@@ -13,7 +13,6 @@ export function Inventory() {
     response,
     mutate,
     isLoading,
-    error,
     table,
     handleDeleteItem,
     handleDownload,

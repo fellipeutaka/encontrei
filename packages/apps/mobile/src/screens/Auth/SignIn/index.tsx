@@ -1,56 +1,19 @@
-import { useForm, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { View, Text, TouchableOpacity } from "react-native";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigation } from "@react-navigation/native";
-import { z } from "zod";
-
-import { AuthStackNavigationProps } from "@encontrei/@types/routes/NavigationProps/Auth";
 import * as Button from "@encontrei/components/Controllers/Button";
 import {
   EmailField,
   PasswordField,
 } from "@encontrei/components/Controllers/TextField";
+import { FormError } from "@encontrei/components/General/FormError";
 import { KeyboardAvoidingView } from "@encontrei/components/General/KeyboardAvoidingView";
 import { Label } from "@encontrei/components/General/Label";
-import { useToast } from "@encontrei/hooks/useToast";
-import { supabase } from "@encontrei/lib/supabase";
-import { vibrate } from "@encontrei/utils/vibrate";
-import { email, password } from "@encontrei/utils/zodSchemas";
 
-type FormData = {
-  email: string;
-  password: string;
-};
-
-const signInSchema = z.object({
-  email,
-  password,
-});
+import { useSignIn } from "./useSignIn";
 
 export function SignIn() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({
-    resolver: zodResolver(signInSchema),
-  });
-  const { navigate } = useNavigation<AuthStackNavigationProps>();
-  const toast = useToast();
-
-  async function signIn({ email, password }: FormData) {
-    const { error } = await supabase.auth.signIn({
-      email,
-      password,
-    });
-    if (error) {
-      toast({
-        message: error.message,
-        type: "error",
-      });
-    }
-  }
+  const { control, errors, isSubmitting, handleSignIn, navigate } = useSignIn();
 
   return (
     <KeyboardAvoidingView>
@@ -74,11 +37,7 @@ export function SignIn() {
               />
             )}
           />
-          {errors.email && (
-            <Text className="text-red-600 font-semibold my-1">
-              {errors.email.message}
-            </Text>
-          )}
+          <FormError message={errors.email?.message} />
           <Label className="my-4">Senha</Label>
           <Controller
             control={control}
@@ -94,11 +53,7 @@ export function SignIn() {
               />
             )}
           />
-          {errors.password && (
-            <Text className="text-red-600 font-semibold mt-1 -mb-4">
-              {errors.password.message}
-            </Text>
-          )}
+          <FormError message={errors.password?.message} />
         </View>
         <TouchableOpacity
           className="mt-4 self-end"
@@ -110,7 +65,7 @@ export function SignIn() {
         </TouchableOpacity>
         <Button.Root
           className="mt-12 mb-4 h-16 rounded-full"
-          onPress={handleSubmit(signIn, () => vibrate())}
+          onPress={handleSignIn}
           isLoading={isSubmitting}
         >
           <Button.Text>Entrar</Button.Text>

@@ -7,8 +7,7 @@ import { Table } from "@encontrei/components/Table";
 import { useDelivered } from "./useDelivered";
 
 export function Delivered() {
-  const { response, mutate, isLoading, error, table, handleDownload } =
-    useDelivered();
+  const { response, mutate, isLoading, table, handleDownload } = useDelivered();
 
   return (
     <main className="flex flex-col justify-center items-center h-screen">

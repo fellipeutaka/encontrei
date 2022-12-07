@@ -35,10 +35,12 @@ export const description = z
 
 export const category = z.string({
   required_error: "Categoria é obrigatória!",
+  invalid_type_error: "Categoria é obrigatória!",
 });
 
 export const local = z.string({
-  required_error: "Categoria é obrigatória!",
+  required_error: "Local é obrigatório!",
+  invalid_type_error: "Local é obrigatório!",
 });
 
 export const photoUrl = z.string({

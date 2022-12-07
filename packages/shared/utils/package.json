@@ -2,8 +2,12 @@
   "name": "@encontrei/shared-utils",
   "version": "1.0.0",
   "private": true,
-  "main": "src/index.ts",
+  "main": "build/index.js",
+  "types": "src/index.ts",
   "devDependencies": {
     "@supabase/supabase-js": "^1.35.3"
+  },
+  "scripts": {
+    "build": "tsc"
   }
 }

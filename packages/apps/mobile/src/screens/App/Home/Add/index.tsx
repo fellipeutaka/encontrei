@@ -1,147 +1,27 @@
-import { useForm, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { ScrollView, Image, Text, View, TouchableOpacity } from "react-native";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigation } from "@react-navigation/native";
-import {
-  launchCameraAsync,
-  launchImageLibraryAsync,
-  MediaTypeOptions,
-  requestCameraPermissionsAsync,
-} from "expo-image-picker";
-import { z } from "zod";
 
 import * as Button from "@encontrei/components/Controllers/Button";
 import { Select } from "@encontrei/components/Controllers/Select";
 import * as TextField from "@encontrei/components/Controllers/TextField";
+import { FormError } from "@encontrei/components/General/FormError";
 import { KeyboardAvoidingView } from "@encontrei/components/General/KeyboardAvoidingView";
 import { Label } from "@encontrei/components/General/Label";
 import { Feather } from "@encontrei/components/Icons/ExpoIcons";
-import { useToast } from "@encontrei/hooks/useToast";
-import { supabase } from "@encontrei/lib/supabase";
-import {
-  categories,
-  locals,
-  SupabaseInventoryFound,
-} from "@encontrei/shared-constants";
-import {
-  getUnixTimestampInSeconds,
-  removeSpecialCharacters,
-} from "@encontrei/shared-utils";
-import { createImageFormData } from "@encontrei/utils/createImageFormData";
-import { vibrate } from "@encontrei/utils/vibrate";
-import {
-  name,
-  description,
-  category,
-  local,
-  photoUrl,
-} from "@encontrei/utils/zodSchemas";
+import { categories, locals } from "@encontrei/shared-constants";
 
-const addSchema = z.object({
-  name,
-  description,
-  category,
-  local,
-  photoUrl,
-});
-
-type FormData = z.output<typeof addSchema>;
+import { useAdd } from "./useAdd";
 
 export function Add() {
   const {
     control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    getValues,
-    setValue,
-  } = useForm<FormData>({
-    resolver: zodResolver(addSchema),
-  });
-  const { goBack } = useNavigation();
-  const toast = useToast();
-
-  async function addNewItem(data: FormData) {
-    const imageExtension = data.photoUrl.split(".").pop() ?? "jpeg";
-    const photoFilename = `${removeSpecialCharacters(
-      data.name
-    )}-${getUnixTimestampInSeconds()}.${imageExtension}`;
-    const { error: storageError } = await supabase.storage
-      .from("item-photo")
-      .upload(
-        photoFilename,
-        createImageFormData({
-          name: photoFilename,
-          uri: data.photoUrl,
-          imageExtension,
-        }),
-        {
-          cacheControl: "15552000",
-          contentType: "image/" + imageExtension,
-        }
-      );
-
-    if (storageError) {
-      return toast({
-        type: "error",
-        message: storageError.message,
-      });
-    }
-
-    const userId = supabase.auth.user()?.id;
-    const { error } = await supabase
-      .from<SupabaseInventoryFound>("inventoryFound")
-      .insert({
-        name: data.name.trim(),
-        description: data.description.trim(),
-        category: data.category,
-        local: data.local,
-        userId,
-        photoFilename,
-      })
-      .throwOnError();
-    if (error) {
-      return toast({
-        type: "error",
-        message: error.message,
-      });
-    }
-    toast({
-      type: "success",
-      message: "Enviado com sucesso",
-    });
-    goBack();
-  }
-
-  async function handlePickImage() {
-    const result = await launchImageLibraryAsync({
-      mediaTypes: MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setValue("photoUrl", result.uri);
-    }
-  }
-
-  async function handleTakePhoto() {
-    const permission = await requestCameraPermissionsAsync();
-
-    if (permission.granted) {
-      const result = await launchCameraAsync({
-        mediaTypes: MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-
-      if (!result.cancelled) {
-        setValue("photoUrl", result.uri);
-      }
-    }
-  }
+    errors,
+    watch,
+    isSubmitting,
+    handlePickImage,
+    handleTakePhoto,
+    handleAddNewItem,
+  } = useAdd();
 
   return (
     <KeyboardAvoidingView>
@@ -162,14 +42,13 @@ export function Add() {
                 error={Boolean(error)}
                 onChangeText={onChange}
                 maxLength={24}
+                placeholder="Nome"
                 {...field}
               />
             </TextField.Root>
           )}
         />
-        <Text className="text-red-600 font-semibold my-1">
-          {errors.name?.message}
-        </Text>
+        <FormError message={errors.name?.message} />
         <Label className="my-4">Descrição</Label>
         <Controller
           control={control}
@@ -183,70 +62,61 @@ export function Add() {
                 error={Boolean(error)}
                 onChangeText={onChange}
                 maxLength={48}
+                placeholder="Descrição"
                 {...field}
               />
             </TextField.Root>
           )}
         />
-        <Text className="text-red-600 font-semibold my-1">
-          {errors.description?.message}
-        </Text>
-        <Label>Categoria</Label>
+        <FormError message={errors.description?.message} />
+        <Label className="my-4">Categoria</Label>
         <Controller
           control={control}
           name="category"
-          render={({
-            field: { onChange, ...field },
-            fieldState: { error },
-          }) => (
+          render={({ field: { onChange, ref, ...field } }) => (
             <Select {...field} onValueChange={onChange} options={categories} />
           )}
         />
-        <Text className="text-red-600 font-semibold my-1">
-          {errors.category?.message}
-        </Text>
-        <Label>Local</Label>
+        <FormError message={errors.category?.message} />
+        <Label className="my-4">Local</Label>
         <Controller
           control={control}
           name="local"
-          render={({
-            field: { onChange, ...field },
-            fieldState: { error },
-          }) => <Select {...field} onValueChange={onChange} options={locals} />}
+          render={({ field: { onChange, ref, ...field } }) => (
+            <Select {...field} onValueChange={onChange} options={locals} />
+          )}
         />
-        <Text className="text-red-600 font-semibold my-1">
-          {errors.local?.message}
-        </Text>
-        <Label>Foto</Label>
-        {getValues("photoUrl") ? (
+        <FormError message={errors.local?.message} />
+        <Label className="my-4">Foto</Label>
+        {watch("photoUrl") ? (
           <Image
             className="w-[50vw] h-[50vw] rounded-md self-center"
-            source={{ uri: getValues("photoUrl") }}
+            source={{ uri: watch("photoUrl") }}
           />
         ) : (
-          <Text>Nenhuma foto selecionada</Text>
+          <Text className="dark:text-zinc-50 -mt-4">
+            Nenhuma foto selecionada
+          </Text>
         )}
-        <Text className="text-red-600 font-semibold my-1">
-          {errors.photoUrl?.message}
-        </Text>
-        <View className="flex-row justify-between my-3 mx-auto w-36">
+        <FormError message={errors.photoUrl?.message} />
+        <View className="flex-row justify-between my-4 mx-auto w-36">
           <TouchableOpacity
-            className="w-16 h-16 bg-zinc-600"
+            className="w-16 h-16 bg-zinc-600 rounded-full justify-center items-center"
             onPress={handlePickImage}
           >
-            <Feather name="image" size={20} color="white" />
+            <Feather name="image" size={20} className="text-white" />
           </TouchableOpacity>
           <TouchableOpacity
-            className="w-16 h-16 bg-zinc-600"
+            className="w-16 h-16 bg-zinc-600 rounded-full justify-center items-center"
             onPress={handleTakePhoto}
           >
-            <Feather name="camera" size={20} color="white" />
+            <Feather name="camera" size={20} className="text-white" />
           </TouchableOpacity>
         </View>
         <Button.Root
-          className="mb-6"
+          className="h-16 mb-12"
           isLoading={isSubmitting}
-          onPress={handleSubmit(addNewItem, () => vibrate())}
+          onPress={handleAddNewItem}
         >
           <Button.Text>Enviar</Button.Text>
         </Button.Root>

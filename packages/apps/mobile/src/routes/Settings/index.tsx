@@ -1,25 +1,28 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useColorScheme } from "nativewind";
 import type { SettingsStackParamsList } from "src/@types/routes/ParamsList/App/Settings";
-import { useTheme } from "styled-components/native";
 
 import { Settings as Home } from "@encontrei/screens/App/Settings";
 import { About } from "@encontrei/screens/App/Settings/About";
 import { Account } from "@encontrei/screens/App/Settings/Account";
 import { Appearance } from "@encontrei/screens/App/Settings/Appearance";
 import { Notifications } from "@encontrei/screens/App/Settings/Notifications";
+import { colors } from "@encontrei/tailwind-config";
 
 const Stack = createNativeStackNavigator<SettingsStackParamsList>();
 
 export function SettingsStack() {
-  const theme = useTheme();
+  const { colorScheme } = useColorScheme();
 
   return (
     <Stack.Navigator
       screenOptions={{
         animation: "slide_from_right",
-        headerTintColor: theme.colors.mauve12,
+        headerTintColor:
+          colorScheme === "dark" ? colors.zinc[50] : colors.zinc[900],
         headerStyle: {
-          backgroundColor: theme.colors.mauve1,
+          backgroundColor:
+            colorScheme === "dark" ? colors.zinc[900] : colors.zinc[50],
         },
         headerBackTitleVisible: false,
       }}

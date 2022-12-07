@@ -14,9 +14,6 @@
     "mobile": "yarn workspace @encontrei/mobile",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
-  "dependencies": {
-    "swr": "^1.3.0"
-  },
   "devDependencies": {
     "eslint": "^8.0.1",
     "eslint-config-custom": "*",

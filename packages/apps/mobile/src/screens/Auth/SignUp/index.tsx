@@ -1,9 +1,5 @@
-import { useForm, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { View, Text, TouchableOpacity } from "react-native";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigation } from "@react-navigation/native";
-import { z } from "zod";
 
 import * as Button from "@encontrei/components/Controllers/Button";
 import {
@@ -11,55 +7,14 @@ import {
   EmailField,
   PasswordField,
 } from "@encontrei/components/Controllers/TextField";
+import { FormError } from "@encontrei/components/General/FormError";
 import { KeyboardAvoidingView } from "@encontrei/components/General/KeyboardAvoidingView";
 import { Label } from "@encontrei/components/General/Label";
-import { useToast } from "@encontrei/hooks/useToast";
-import { supabase } from "@encontrei/lib/supabase";
-import { vibrate } from "@encontrei/utils/vibrate";
-import { name, email, password } from "@encontrei/utils/zodSchemas";
 
-const signUpSchema = z.object({
-  name,
-  email,
-  password,
-});
-
-type FormData = z.output<typeof signUpSchema>;
+import { useSignUp } from "./useSignUp";
 
 export function SignUp() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({
-    resolver: zodResolver(signUpSchema),
-  });
-  const { goBack } = useNavigation();
-  const toast = useToast();
-
-  async function signUp({ name, email, password }: FormData) {
-    const { error } = await supabase.auth.signUp(
-      {
-        email,
-        password,
-      },
-      {
-        data: {
-          name: name.trim(),
-        },
-      }
-    );
-    if (error) {
-      return toast({
-        type: "error",
-        message: error.message,
-      });
-    }
-    toast({
-      type: "success",
-      message: "Conta criada com sucesso! Por favor, confirme seu e-mail",
-    });
-  }
+  const { control, errors, goBack, isSubmitting, handleSignUp } = useSignUp();
 
   return (
     <KeyboardAvoidingView>
@@ -84,11 +39,7 @@ export function SignUp() {
               />
             )}
           />
-          {errors.name && (
-            <Text className="text-red-600 font-semibold my-1">
-              {errors.name.message}
-            </Text>
-          )}
+          <FormError message={errors.name?.message} />
           <Label className="my-4">E-mail</Label>
           <Controller
             control={control}
@@ -105,11 +56,7 @@ export function SignUp() {
               />
             )}
           />
-          {errors.email && (
-            <Text className="text-red-600 font-semibold my-1">
-              {errors.email.message}
-            </Text>
-          )}
+          <FormError message={errors.email?.message} />
           <Label className="my-4">Senha</Label>
           <Controller
             control={control}
@@ -126,15 +73,11 @@ export function SignUp() {
               />
             )}
           />
-          {errors.password && (
-            <Text className="text-red-600 font-semibold my-1">
-              {errors.password.message}
-            </Text>
-          )}
+          <FormError message={errors.password?.message} />
         </View>
         <Button.Root
           className="mt-12 mb-4 h-16 rounded-full"
-          onPress={handleSubmit(signUp, () => vibrate())}
+          onPress={handleSignUp}
           isLoading={isSubmitting}
         >
           <Button.Text>Entrar</Button.Text>

@@ -25,12 +25,8 @@
       "@encontrei/routes/*": ["./src/routes/*"],
       "@encontrei/screens/*": ["./src/screens/*"],
       "@encontrei/styles/*": ["./src/styles/*"],
-      "@encontrei/themes": ["./src/styles/themes"],
-      "@encontrei/themes/*": ["./src/styles/themes/*"],
       "@encontrei/utils/*": ["./src/utils/*"],
       "@encontrei/assets/*": ["./src/assets/*"]
     }
-  },
-  "include": ["src", "electron", "vite.config.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  }
 }

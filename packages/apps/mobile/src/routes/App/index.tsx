@@ -10,7 +10,7 @@ import {
 } from "@encontrei/components/Icons/ExpoIcons";
 import { ScrollIcon } from "@encontrei/components/Icons/ScrollIcon";
 import { HomeStack } from "@encontrei/routes/Home";
-/* import { SettingsStack } from "@encontrei/routes/Settings"; */
+import { SettingsStack } from "@encontrei/routes/Settings";
 import { WithdrawStack } from "@encontrei/routes/Withdraw";
 import { colors } from "@encontrei/tailwind-config";
 
@@ -66,7 +66,7 @@ export function AppStack() {
           ),
         }}
       />
-      {/* <Tabs.Screen
+      <Tabs.Screen
         name="Settings"
         component={SettingsStack}
         options={{
@@ -79,7 +79,7 @@ export function AppStack() {
             />
           ),
         }}
-      /> */}
+      />
     </Tabs.Navigator>
   );
 }

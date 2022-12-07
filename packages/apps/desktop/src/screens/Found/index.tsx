@@ -13,7 +13,6 @@ export function Found() {
     response,
     mutate,
     isLoading,
-    error,
     table,
     handleAcceptItem,
     handleRefuseItem,

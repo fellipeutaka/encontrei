@@ -1,48 +1,39 @@
-import { useState } from "react";
-import { Switch } from "react-native";
+import { ScrollView, Switch, View } from "react-native";
 
-import { useTheme } from "styled-components/native";
+import { useColorScheme } from "nativewind";
 
 import { Feather } from "@encontrei/components/Icons/ExpoIcons";
-import { useCustomTheme } from "@encontrei/hooks/useCustomTheme";
-import SettingsOption from "@encontrei/screens/App/Settings/components/SettingsOption";
+import { colors } from "@encontrei/tailwind-config";
 
-import { Container, Options, OptionsContainer } from "../styles";
+import { SettingsOption } from "../components/SettingsOption";
 
 export function Appearance() {
-  const theme = useTheme();
-  const { currentTheme, toggleTheme } = useCustomTheme();
-  const [darkMode, setDarkMode] = useState(currentTheme === "dark");
-
-  async function toggleDarkMode() {
-    await toggleTheme();
-    setDarkMode((state) => !state);
-  }
+  const { colorScheme, toggleColorScheme } = useColorScheme();
 
   return (
-    <Container>
-      <OptionsContainer>
-        <Options>
+    <View className="flex-1 justify-center items-center dark:bg-zinc-900">
+      <View className="w-full px-6">
+        <ScrollView>
           <SettingsOption
             title="Tema escuro"
             icon={
-              <Feather name="moon" size={20} color={theme.colors.mauve12} />
+              <Feather name="moon" size={20} className="dark:text-zinc-50" />
             }
             isTouchable={false}
             rightElement={
               <Switch
-                value={darkMode}
-                onValueChange={toggleDarkMode}
+                value={colorScheme === "dark"}
+                onValueChange={toggleColorScheme}
                 trackColor={{
                   false: "#767676",
-                  true: theme.colors.violet9,
+                  true: colors.violet[600],
                 }}
                 thumbColor="#FFFFFF"
               />
             }
           />
-        </Options>
-      </OptionsContainer>
-    </Container>
+        </ScrollView>
+      </View>
+    </View>
   );
 }

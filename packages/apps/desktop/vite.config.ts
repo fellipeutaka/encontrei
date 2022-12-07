@@ -20,7 +20,6 @@ export default defineConfig({
       "@encontrei/routes": path.join(__dirname, "src", "routes"),
       "@encontrei/screens": path.join(__dirname, "src", "screens"),
       "@encontrei/styles": path.join(__dirname, "src", "styles"),
-      "@encontrei/themes": path.join(__dirname, "src", "styles", "themes"),
       "@encontrei/utils": path.join(__dirname, "src", "utils"),
       "@encontrei/assets": path.join(__dirname, "src", "assets"),
     },
@@ -28,9 +27,14 @@ export default defineConfig({
   plugins: [
     react(),
     electron({
-      include: ["electron", "preload"],
+      include: [
+        "electron/main/index.ts",
+        "electron/bridge/index.ts",
+        "electron/preload/index.ts",
+      ],
       transformOptions: {
         sourcemap: Boolean(process.env.VSCODE_DEBUG),
+        minify: process.argv.slice(2).includes("build"),
       },
     }),
     renderer({
