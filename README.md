@@ -20,10 +20,10 @@
 </p>
 <p align="center">
   <a href="#-project">Project</a>   |   
-  <a href="#rocket-Technologies">Technologies</a>   |   
-  <a href="#-how-to-use">How to use</a>   |   
+  <a href="#-technologies">Technologies</a>   |   
+  <a href="#ℹ%EF%B8%8F-how-to-use">How to use</a>   |   
   <a href="#-how-to-contribute">How to contribute</a>   |   
-  <a href="#memo-license">License</a>   |   
+  <a href="#-license">License</a>   |   
 </p>
 
 ## 💻 Project
