@@ -8,6 +8,9 @@
 <a href="https://www.linkedin.com/in/fellipeutaka/">
     <img alt="Made by Fellipe Utaka & Victor Micco" src="https://img.shields.io/badge/made%20by-Fellipe%20Utaka-%2304D361">
 </a>
+  <a href="https://www.linkedin.com/in/victormicco/">
+    <img alt="Made by Fellipe Utaka & Victor Micco" src="https://img.shields.io/badge/made%20by-Victor%20Micco-%2304D361">
+</a>
 
 <a href="https://github.com/fellipeutaka/encontrei/commits/master">
     <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/fellipeutaka/encontrei">
