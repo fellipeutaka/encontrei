@@ -6,7 +6,7 @@
   <img alt="Repository size" src="https://img.shields.io/github/repo-size/fellipeutaka/encontrei">
 
 <a href="https://www.linkedin.com/in/fellipeutaka/">
-    <img alt="Made by Fellipe Utaka" src="https://img.shields.io/badge/made%20by-Fellipe%20Utaka-%2304D361">
+    <img alt="Made by Fellipe Utaka & Victor Micco" src="https://img.shields.io/badge/made%20by-Fellipe%20Utaka-%2304D361">
 </a>
 
 <a href="https://github.com/fellipeutaka/encontrei/commits/master">
@@ -81,7 +81,7 @@ Or, see the GitHub documentation on [how to create a pull request](https://help.
 
 This project is under the MIT license. See the [LICENSE](https://github.com/fellipeutaka/encontrei/blob/master/LICENSE) for details.
 
-Made with ♥ by Fellipe Utaka 👋 [Get in touch!](https://www.linkedin.com/in/fellipeutaka/)
+Made with ♥ by Fellipe Utaka & Victor Micco👋 [Get in touch!](https://www.linkedin.com/in/fellipeutaka/)
 
 [figma]: https://www.figma.com/file/kwLAEZmyDB2NuvMNi87XGF/Bol%C3%A3o-da-Copa-(Community)
 [node]: https://nodejs.org/
